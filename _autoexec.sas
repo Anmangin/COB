@@ -6,7 +6,7 @@
     %put ERROR: Macros SBE: la macrovariable "path" et "local_folder" doit être déclarée;
 %end;
 %else %do;
-    %include "&path/&local_folder./Import&mapping/01_import des libname oracle.sas";
+    %include "&path/&local_folder./Import/01_import des libname oracle.sas";
 %end;
 
 
