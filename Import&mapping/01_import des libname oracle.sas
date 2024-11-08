@@ -1,23 +1,23 @@
 /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
                                                   Fichier D'importation des bases oracle de coblance
 
- Ce fichier importe les données brutes sur le reseau pour permettre à tous les utilisateurs de travailler sans la licence oracle
+ Ce fichier importe les donnÃ©es brutes sur le reseau pour permettre Ã  tous les utilisateurs de travailler sans la licence oracle
 V1 20/10/2020 -> Anthony M
 V2 04/09/2023 -> Anthony M revu pour France Cohorte
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 
-* Liste des macrovariables a paramétrer : path (définit dans le fichier FINAL_EXE.sas qui appelle ce code);
-* Nécessite Oracle 64bit et Licence SAS/Oracle pour fonctionner;
+* Liste des macrovariables a paramÃ©trer : path (dÃ©finit dans le fichier FINAL_EXE.sas qui appelle ce code);
+* NÃ©cessite Oracle 64bit et Licence SAS/Oracle pour fonctionner;
 * Reserver aux DM;
 
 * Nom du fichier pour trouver le path;
-/*%let pathRAW=&path_prog\Base de donnée SAS;*/
+/*%let pathRAW=&path_prog\Base de donnÃ©e SAS;*/
  *---------------------------------------------- ;
 
-* Créer le dossier RAW où se trouvera les données brutes de la base oracle au moment de l'éxecution de ce code;
+* CrÃ©er le dossier RAW oÃ¹ se trouvera les donnÃ©es brutes de la base oracle au moment de l'Ã©xecution de ce code;
 
-%let pathRAW=\\nas-01\SBE_ETUDES\COBLANCE\11-DataBase\GITHUB\Base de donnée SAS\RAW;
+%let pathRAW=\\nas-01\SBE_ETUDES\COBLANCE\11-DataBase\GITHUB\Base de donnÃ©e SAS\RAW;
 
 
 %macro CreatFolder(dossier);
@@ -46,7 +46,7 @@ V2 04/09/2023 -> Anthony M revu pour France Cohorte
 
 
 
- * Sous macro pour vider une libname et éviter les problèmes d'import;
+ * Sous macro pour vider une libname et Ã©viter les problÃ¨mes d'import;
 %macro vider(lib);
 data nomtable ;set sashelp.vstable;where libname=upcase("&lib.");if memname='TIMEDOWN' or memname='timedown' or memname="nomtable" then delete;run;
 proc sql noprint;select distinct count(*) into: nbtable from nomtable; quit;
@@ -54,7 +54,7 @@ proc sql noprint;select distinct count(*) into: nbtable from nomtable; quit;
 %mend;
 
 
-* Macro pour copier les table d'une libname à l'autre, avec un argument optionnel pour retirer une ou plusieurs table;
+* Macro pour copier les table d'une libname Ã  l'autre, avec un argument optionnel pour retirer une ou plusieurs table;
 %macro copie(in,stu,exclude=NULL);
 %vider(&STU);proc copy in=&in out=&STU memtype=data;%if &exclude NE NULL %then %do;exclude &exclude;%end;run;
 %mend;
@@ -70,14 +70,14 @@ proc sql noprint;select distinct count(*) into: nbtable from nomtable; quit;
 
 
 * Suppression de certaines tables et variables;
-/* les tables suivante ont vité été "supprimé" de la base. on peut pas les retirer totalement a cause du systeme de l'eCRF assez ridide, alors il faut les retirer sous sas. il s'agit
-de l'ancien méthode de collecte de l'anapath, on a fait une base appart par la suite */
+/* les tables suivante ont vitÃ© Ã©tÃ© "supprimÃ©" de la base. on peut pas les retirer totalement a cause du systeme de l'eCRF assez ridide, alors il faut les retirer sous sas. il s'agit
+de l'ancien mÃ©thode de collecte de l'anapath, on a fait une base appart par la suite */
 
 %suppr(rawincl.Anameta);%suppr(rawincl.Cysanap);%suppr(rawincl.Cysanap_loca_sieg);%suppr(rawincl.Relect1);
 %suppr(rawincl.Relect2);%suppr(rawincl.Rtuvanap1);%suppr(rawincl.Rtuvrelec1);*%suppr(rawincl.Relect1);
 
 
-/* afin de rester cohérent, on retire également ces tables de la liste des tables */
+/* afin de rester cohÃ©rent, on retire Ã©galement ces tables de la liste des tables */
 
 data rawincl.crfpage;
 set	 rawincl.crfpage;
