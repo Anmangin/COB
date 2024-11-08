@@ -17,12 +17,12 @@ V2 04/09/2023 -> Anthony M revu pour France Cohorte
 
 * Créer le dossier RAW où se trouvera les données brutes de la base oracle au moment de l'éxecution de ce code;
 
-%let pathRAW=\\nas-01\SBE_ETUDES\COBLANCE\11-DataBase\GITHUB\Base de donnée SAS\RAW;
 
 
 %macro CreatFolder(dossier);
+	filename dossier "&dossier";
     option NOXWAIT;  /* Permet de retourner automatiquement a SAS apres l execution de la commande */
-	%if %sysfunc(fexist(&dossier))= 0 %then %do;
+	%if %sysfunc(fexist(dossier))= 0 %then %do;
     x mkdir "&dossier.";  /* Creation du dossier en commande DOS */
 	%end;
 	%else %put NOTE: le dossier &dossier existe deja.;
@@ -35,13 +35,13 @@ V2 04/09/2023 -> Anthony M revu pour France Cohorte
 %MACRO suppr(table);proc sql noprint; Drop Table &table;quit;%mend;
 
 /* Macro Getlib : Cree un dossier et le place en libname */
-%macro Getlib(nom, dossier);
-    option NOXWAIT;  
-    %if %sysfunc(fexist(&dossier)) = 0 %then %do;
-        x mkdir "&dossier.";  /* Creation du dossier en commande DOS si inexistant */
-    %end;
-    libname &nom "&dossier."; /* Assignation de la libname */
-    %vider(&nom);  /* Appel de la macro pour vider le contenu si necessaire */
+%macro Getlib(nom,dossier);
+filename dossier "&dossier";
+%if %sysfunc(fexist(dossier)) = 0 %then %do;
+option NOXWAIT;
+x mkdir "&dossier.";
+%end;
+libname &nom "&dossier.";
 %mend;
 
 
@@ -95,7 +95,7 @@ run;
 
 
 * Importation de la base Cosuivi_ORA;
-%Getlib(rawsuiv,&pathRAW\RAW\suiv);
+%Getlib(rawsuiv,&pathRAW\suiv);
 %copie(ora_suiv,rawsuiv,exclude=dataitemresponse);
 
 /* idem que pour l'inclusion */
@@ -119,7 +119,7 @@ run;
 
 
 * Importation de la base Cobanap_ORA;
-%Getlib(rawanap,&pathRAW\RAW\anap);
+%Getlib(rawanap,&pathRAW\anap);
 %copie(ora_anap,rawanap,exclude=dataitemresponse);
 
 %suppr(rawanap.Rtuvrelec1);%suppr(rawanap.Rtuvrelec1_sous_1);%suppr(rawanap.Rtuvrelec1_uro_st1);
@@ -144,7 +144,7 @@ run;
 
 
 * Importation de la base relec;
-%Getlib(rawrel,&pathRAW\RAW\relec);
+%Getlib(rawrel,&pathRAW\relec);
 %copie(ora_rel,rawrel,exclude=dataitemresponse);
 
 
