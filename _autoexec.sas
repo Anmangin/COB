@@ -24,6 +24,6 @@
 %include "&dir_path/&local_folder./Import&mapping/12_mapping anapath.sas";
 %include "&dir_path/&local_folder./Import&mapping/13_mapping  metastase.sas";
 %include "&dir_path/&local_folder./Import&mapping/14_Liste des chirurgies.sas";
-%include "&dir_path/&local_folder./Import&mapping/table resume.sas";
-
+%include "&dir_path/&local_folder./Import&mapping/15_table resume.sas";
+%include "&dir_path/&local_folder./Import&mapping/16_planing_etude.sas";
 %mend;
