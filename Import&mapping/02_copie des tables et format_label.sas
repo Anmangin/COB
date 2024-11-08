@@ -1,18 +1,18 @@
 /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
                                                   Fichier De traitement et mapping des tables
 
- Ce fichier permet de traiter les tables stocké dans le raw
+ Ce fichier permet de traiter les tables stocke dans le raw
 V1 20/10/2020 -> Anthony M
 V2 06/09/2023 -> Anthony M et Pierre G revu pour France Cohorte
-V3 29.10.2024 -> Pierre a trouvé une erreur sur Planing_planing1, Temp_model2 n'était pas gérer dans l'exception, planing était réécris a la place de la base
+V3 29.10.2024 -> Pierre a trouve une erreur sur Planing_planing1, Temp_model2 n'etait pas gerer dans l'exception, planing etait reecris a la place de la base
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 
-* Liste des macrovariables a paramétrer : path;
+* Liste des macrovariables a parametrer : path;
 
 
-* Définit l'endroit de stockage de la base locale de travail. A personnaliser;
+* Definit l'endroit de stockage de la base locale de travail. A personnaliser;
 *%let path=D:\coblance;
-* Par défault en commentaire car le chemin est définit dans FINAL_EXE.sas;
+* Par default en commentaire car le chemin est definit dans FINAL_EXE.sas;
 
 * Nom du fichier pour trouver le path;
 /*
@@ -22,21 +22,33 @@ V3 29.10.2024 -> Pierre a trouvé une erreur sur Planing_planing1, Temp_model2 n'
 %let ordervar_g= essai site  anumpat  NBVISIT    bra  vnf v vpla recidive crftitle crfpagecyclenumber repeatnumber CRFPAGESTATUS;
 
 
-* Créer le dossier où sera stocké la copie de la base raw Oracle sur laquelle on travaille;
+* Creer le dossier oe sera stocke la copie de la base raw Oracle sur laquelle on travaille;
 %macro CreatFolder(dossier);
-option NOXWAIT;x mkdir "&dossier.";
+	filename dossier "&dossier";
+    option NOXWAIT;  /* Permet de retourner automatiquement a SAS apres l execution de la commande */
+	%if %sysfunc(fexist(dossier))= 0 %then %do;
+    x mkdir "&dossier.";  /* Cr"eation du dossier en commande DOS */
+	%end;
+	%else %put NOTE: le dossier &dossier existe deja.;
 %mend;
 %CreatFolder(&path\DB);
 
-* Getlib : crée un dossier et le place en libname;
-%macro Getlib(nom,dossier);option NOXWAIT;x mkdir "&dossier.";libname &nom "&dossier.";%mend;
+* Getlib : cree un dossier et le place en libname;
+%macro Getlib(nom,dossier);
+filename dossier "&dossier";
+%if %sysfunc(fexist(dossier)) = 0 %then %do;
+option NOXWAIT;
+x mkdir "&dossier.";
+%end;
+libname &nom "&dossier.";
+%mend;
 
-* Macro pour copier les table d'une libname à l'autre, avec un argument optionnel pour retirer une ou plusieurs table;
+* Macro pour copier les table d'une libname e l'autre, avec un argument optionnel pour retirer une ou plusieurs table;
 %macro copie(in,stu,exclude=NULL);
 %vider(&STU);proc copy in=&in out=&STU memtype=data;%if &exclude NE NULL %then %do;exclude &exclude;%end;run;
 %mend;
 
-* %suppr Simple macro de suppréssion de table, pour rester propre;
+* %suppr Simple macro de suppression de table, pour rester propre;
 %MACRO suppr(table);proc sql noprint; Drop Table &table;quit;%mend;
 %macro vider(lib);
 data nomtable ;set sashelp.vstable;where libname=upcase("&lib.");
@@ -56,17 +68,19 @@ OPTION FMTSEARCH =  ( stu   format LIBRARy) ;
 
  * -------------------------Etape 1 : acces et creation des libnames------------------------------;
 
-* Récupère les libname de RAW;
-%Getlib(RAWincl,&pathraw\RAW\incl);
-%Getlib(RAWsuiv,&pathraw\RAW\suiv);
-%Getlib(RAWanap,&pathraw\RAW\anap);
-%Getlib(RAWrel,&pathraw\RAW\relec);
-* Récupère les libnames de travail (vide à ce moment là);
+* Recupere les libname de RAW;
+%Getlib(RAWincl,&pathraw\incl);
+%Getlib(RAWsuiv,&pathraw\suiv);
+%Getlib(RAWanap,&pathraw\anap);
+%Getlib(RAWrel,&pathraw\relec);
+
+
+* Recupere les libnames de travail (vide e ce moment le);
 %Getlib(incl,&path\DB\incl);
 %Getlib(suiv,&path\DB\suiv);
 %Getlib(anap,&path\DB\anap);
 %Getlib(stu,&path\DB\stu);
-%Getlib(rel,&path\DB\rel);
+%Getlib(rel,&path\DB\relec);
 
 * Copie les libnames de RAW dans les libnames de travail;
 
@@ -92,29 +106,24 @@ RUN;
 proc sql noprint; create table exl as select localidentifier1, 1 as EXLU from incl.Exlusion a left join incl.trialsubject b on
 a.site=b.trialsite and a.personid=b.personid where DEXCL NE .;;quit;
 
-* Table utilisé ensuite pour retirer les patients exclus des selections de tables;
+* Table utilise ensuite pour retirer les patients exclus des selections de tables;
 
 
 *------------------------ etape 2 creation des formats et des labels ------------------------------	 ;
 
-%macro Creation_des_proc_format(lib,stu);
-proc sql noprint; create table format_table as select VALUECODE as start,  ITEMVALUE as label, "N" as type, cats(dataitemcode ,"&stu") as fmtname from &stu..valuedata left join &stu..dataitem on valuedata.dataitemid=dataitem.dataitemiD and valuedata.CLINICALTRIALID=dataitem.CLINICALTRIALID;quit;
-data format_table;set format_table;if ANYALPHA(start)>0 then type="C";run;proc format cntlin=format_table lib=&lib;run;
-%suppr(format_table);
-%MEND;
 
 
 proc format lib=stu;
 value LISTVISITsuiv
 0="Inclusion"
-1="visite à 3 mois"
-2="Visite à 6 mois"
-3="Visite à 1 an"
-4="Visite à 2 ans"
-5="Visite à 3 ans"
-6="Visite à 4 ans"
-7="Visite à 5 ans"
-8="Visite à 6 ans"
+1="visite a 3 mois"
+2="Visite a 6 mois"
+3="Visite a 1 an"
+4="Visite a 2 ans"
+5="Visite a 3 ans"
+6="Visite a 4 ans"
+7="Visite a 5 ans"
+8="Visite a 6 ans"
 9="Recidive";
 
 ;
@@ -123,19 +132,19 @@ value responsestatus
 -12	=NA
 -11	=Absent
 -10	=Vierge
--8	=Inactivé
+-8	=Inactive
 -5	=Not available
 0	=Complete
 10	=MIssing
 25	=OKW
 30	=WArning
 31 =DCR
-.   =inactivé;
+.   =inactive;
 run;
 
 
 
-* Récupère les noms des tables autres que les tables systèmes;
+* Recupere les noms des tables autres que les tables systemes;
 %macro getnomtable(stu);
 %let stuMaj=%sysfunc(UPCASE(&stu.));
 
@@ -147,8 +156,13 @@ run;
 %mend;
 
 
+%macro Creation_des_proc_format(lib,stu);
+proc sql noprint; create table format_table as select VALUECODE as start,  ITEMVALUE as label, "N" as type, cats(dataitemcode ,"&stu") as fmtname from &stu..valuedata left join &stu..dataitem on valuedata.dataitemid=dataitem.dataitemiD and valuedata.CLINICALTRIALID=dataitem.CLINICALTRIALID;quit;
+data format_table;set format_table;if ANYALPHA(start)>0 then type="C";run;proc format cntlin=format_table lib=&lib;run;
+%suppr(format_table);
+%MEND;
 
-* Crée et Applique les formats aux tables;
+* Cree et Applique les formats aux tables;
 %Creation_des_proc_format(stu,incl);
 %Creation_des_proc_format(stu,suiv);
 %Creation_des_proc_format(stu,anap);
@@ -159,7 +173,7 @@ run;
 
 
 %macro get_template(stu,mabase);
-/* creation de la table listtable avec la liste des tables et des variable de l'étude */
+/* creation de la table listtable avec la liste des tables et des variable de l'etude */
 
 /* table temp qui sert a lister les items et les natures de variables */
 proc sql noprint; create table temp as select DATAVIEWNAME,c.crfpagecode,b.dataitemcode,dataitemname,datatype,d.Qgroupcode,dataitemformat from &stu..crfelement a full join
@@ -216,7 +230,7 @@ if final then call symputx("nbtable",_N_);run;
 
 
 
-	/* Préparation des clé de table + import des fiches vides + suppression mauvais enregistrements;*/
+	/* Preparation des cle de table + import des fiches vides + suppression mauvais enregistrements;*/
 
 	proc sql noprint nowarn; create table tempmodel as select "&mabase" as ESSAI format=$15. length=15, e.trialsite as site, LOCALIDENTIFIER1,visitname,0 as NBVISIT , "Inclusion" as v,crftitle,e.crfpagecyclenumber,
 	e.CRFPAGESTATUS format=responsestatus., &&table&j...* 
@@ -236,7 +250,7 @@ if final then call symputx("nbtable",_N_);run;
 	%if "&&group&j" NE "" %then %do;
 		data &stu..&&table&j;
 		set tempmodel_2;
-		label localidentifier1="Pat N°" visitname="Visite" visitcyclenumber="Visite N°" crftitle="form" crfpagecyclenumber="Fiche N°" repeatnumber="Ligne N°" ;
+		label localidentifier1="Pat Ne" visitname="Visite" visitcyclenumber="Visite Ne" crftitle="form" crfpagecyclenumber="Fiche Ne" repeatnumber="Ligne Ne" ;
 		drop personid clinicaltrialid visitid crfpageid ;
 		where LOCALIDENTIFIER1 NE "" and site ne "supprime" and LOCALIDENTIFIER1 ne "personne non identifiee";
 		run;
@@ -251,7 +265,7 @@ if final then call symputx("nbtable",_N_);run;
 
 		data &stu..&&table&j;
 		set tempmodel_2;
-		label localidentifier1="Pat N°" visitname="Visite" visitcyclenumber="Visite N°" crftitle="form" crfpagecyclenumber="Fiche N°";
+		label localidentifier1="Pat Ne" visitname="Visite" visitcyclenumber="Visite Ne" crftitle="form" crfpagecyclenumber="Fiche Ne";
 		drop personid clinicaltrialid visitid crfpageid ;
 		where LOCALIDENTIFIER1 NE "" and site ne "supprime" and LOCALIDENTIFIER1 ne "personne non identifiee";
 		run;
@@ -361,7 +375,7 @@ call symputx("group"||left(_N_),QGROUPCODE);if final then call symputx("nbtable"
 %do j=1 %to &nbtable;
 	%put travail sur la table &stu..&&table&j;
 
-	/* Préparation des clé de table + import des fiches vides + suppression mauvais enregistrements;*/
+	/* Preparation des cle de table + import des fiches vides + suppression mauvais enregistrements;*/
 
 
 	
@@ -415,7 +429,7 @@ and a.NBVISIT=b.NBVISIT;quit;
 
 data &stu..&&table&j;
 set tempmodel_2;
-label localidentifier1="Pat N°" visitname="Visite" visitcyclenumber="Visite N°" crftitle="form" crfpagecyclenumber="Fiche N°" repeatnumber="Ligne N°" ;
+label localidentifier1="Pat Ne" visitname="Visite" visitcyclenumber="Visite Ne" crftitle="form" crfpagecyclenumber="Fiche Ne" repeatnumber="Ligne Ne" ;
 numvisit=0;
 drop personid clinicaltrialid visitid crfpageid numvisit;
 where LOCALIDENTIFIER1 NE "" and site ne "supprime" and LOCALIDENTIFIER1 ne "personne non identifiee";
@@ -426,7 +440,7 @@ run;
 	%if "&&group&j" NE "" %then %do;
 		data &stu..&&table&j;
 		set tempmodel_2;
-		label localidentifier1="Pat N°" visitname="Visite" visitcyclenumber="Visite N°" crftitle="form" crfpagecyclenumber="Fiche N°" repeatnumber="Ligne N°" ;
+		label localidentifier1="Pat Ne" visitname="Visite" visitcyclenumber="Visite Ne" crftitle="form" crfpagecyclenumber="Fiche Ne" repeatnumber="Ligne Ne" ;
 		drop personid clinicaltrialid visitid crfpageid ;
 		where LOCALIDENTIFIER1 NE "" and site ne "supprime" and LOCALIDENTIFIER1 ne "personne non identifiee";
 		run;
@@ -441,7 +455,7 @@ run;
 	
 		data &stu..&&table&j;
 		set tempmodel_2;
-		label localidentifier1="Pat N°" visitname="Visite" visitcyclenumber="Visite N°" crftitle="form" crfpagecyclenumber="Fiche N°";
+		label localidentifier1="Pat Ne" visitname="Visite" visitcyclenumber="Visite Ne" crftitle="form" crfpagecyclenumber="Fiche Ne";
 		drop personid clinicaltrialid visitid crfpageid ;
 		where LOCALIDENTIFIER1 NE "" and site ne "supprime" and LOCALIDENTIFIER1 ne "personne non identifiee";
 		run;
@@ -523,7 +537,7 @@ data _null_;set listtable end=final;call symputx("table"||left(_N_),table);call 
 %do j=1 %to &nbtable;
 	%put travail sur la table &stu..&&table&j;
 
-	/* Préparation des clé de table + import des fiches vides + suppression mauvais enregistrements;*/
+	/* Preparation des cle de table + import des fiches vides + suppression mauvais enregistrements;*/
 	proc sql noprint; create table tempmodel as select  "&mabase" as ESSAI format=$15. length=15,LOCALIDENTIFIER1,visitname,crftitle,e.CRFPAGESTATUS, &&table&j...* from &stu..&&table&j a
 	left join &stu..studyvisit b on a.visitid=b.visitid and a.CLINICALTRIALID=b.CLINICALTRIALID
 	left join &stu..crfpage c on a.crfpageid=c.crfpageid  and a.CLINICALTRIALID=c.CLINICALTRIALID
@@ -533,11 +547,11 @@ data _null_;set listtable end=final;call symputx("table"||left(_N_),table);call 
  	a.visitid=e.visitid and a.visitcyclenumber=e.visitcyclenumber and a.crfpageid=e.crfpageid and a.crfpagecyclenumber=e.crfpagecyclenumber
 	where LOCALIDENTIFIER1 NE "" and site ne "supprime" and LOCALIDENTIFIER1 ne "personne non identifiee";
 	;quit;
-	/* Réorganise et harmonise la labelisation des variables d'identification des tables; */
+	/* Reorganise et harmonise la labelisation des variables d'identification des tables; */
 	data &stu..&&table&j;
 	retain site localidentifier1 visitname visitcyclenumber crftitle crfpagecyclenumber repeatnumber CRFPAGESTATUS nbq;
 	set tempmodel;
-	label localidentifier1="Pat N°" visitname="Visite" visitcyclenumber="Visite N°" crftitle="form" crfpagecyclenumber="Fiche N°" repeatnumber="Ligne N°" ;
+	label localidentifier1="Pat Ne" visitname="Visite" visitcyclenumber="Visite Ne" crftitle="form" crfpagecyclenumber="Fiche Ne" repeatnumber="Ligne Ne" ;
 	drop personid clinicaltrialid visitid crfpageid;
 	run;
 
@@ -620,9 +634,11 @@ data _null_;set listtable end=final;call symputx("table"||left(_N_),table);call 
 
 %ApplyFormat_anap(anap,COBANAP);
 %ApplyFormat_anap(rel,COBREL);
+
+
 /*
 
-* Suppression des tables intermédiaires;
+* Suppression des tables intermediaires;
 %suppr(temp);
 %suppr(Listtable);
 %suppr(Tempmodel);
