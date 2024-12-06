@@ -270,6 +270,7 @@ ANCG04 as grade04 format=k.,
 case when ANCCIS=2 then 2 else ANCCISAS end as CASASS format=ANCCISASANAP.,
 case when ANCCIS=2 then 2 else ANCCISEX  end as CASEXL format=ANCCISEXANAP.,
 case when put(ANTPHISTO,ANTPHISTOANAP.)="Autre" then ANTPHISTOP else  put(ANTPHISTO,ANTPHISTOANAP.) end as histo
+
 from stu.An_cystec 
 where anumpat NE "" and V NE 2
 
@@ -316,13 +317,43 @@ case when MTDPREL NE . then MTDPREL  when MTDREP NE . then MTDREP else MTDANAP e
 case when MTBIOPSI=1 and MTHISTOP NE "PAF DE TUMEUR" then 1 else . end as MF "M final par ligne" format=m.,
 . as grade73 format=j.,
 . as grade04 format=k.
+/*
+case when  MTAUORG NE "" then MTAUORG else put(MTORG,MTORGANAP.)  end as MLOG format=$50.
+*/
 from stu.An_anameta
 
 ;
 ;quit;
 
+/* Filtrer les réponses MTAUORG pour V=1 */
+data loc_meta;
+    set stu.An_anameta;
+    where V = 1;
+run;
+proc sort; by anumpat;run;
 
-proc sort; by anumpat descending tf ANDPRELP;run;
+data loc_meta;
+set loc_meta;
+format metaloc $50.
+retain meta;
+by anumpat;
+if First.anumpat then do;
+if MTAUORG NE "" then metaloc= MTAUORG;
+else metaloc=put(MTORG,MTORGanap.);
+end;
+else do;
+if MTAUORG NE "" then metaloc= cats(metaloc,"/",MTAUORG);
+else metaloc=cats(metaloc,"/",put(MTORG,MTORGanap.)); ;
+end;
+if last.anumpat;
+keep anumpat metaloc;
+run;
+
+proc sql noprint; create table tnm_all_1 as select a.*,metaloc from tnm_all a left join loc_meta b on a.anumpat=b.anumpat
+and find(crftitle,"Meta");quit;
+
+
+
 
 
 /* table temporaire ou on vire le suivi */
@@ -341,7 +372,7 @@ run;
 
 /* on reccupere le max de chaque item a placer dans la table */
 proc sql noprint; create table temp_N as select distinct anumpat, max(NF) as NF  from temp_N0 group by anumpat ;quit;
-proc sql noprint; create table temp_M as select distinct anumpat, max(MF) as MF  from temp_N0 group by anumpat ;quit;
+proc sql noprint; create table temp_M as select distinct a.anumpat, max(MF) as MF  from temp_N0 a left join loc_meta b on a.anumpat=b.anumpat group by a.anumpat ;quit;
 proc sql noprint; create table temp_G1 as select distinct anumpat, max(grade73) as grade73  from temp_N0 group by anumpat ;quit;
 proc sql noprint; create table temp_G2 as select distinct anumpat, max(grade04) as grade04  from temp_N0 group by anumpat ;quit;
 
