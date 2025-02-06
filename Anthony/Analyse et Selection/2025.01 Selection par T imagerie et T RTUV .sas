@@ -12,15 +12,9 @@
 
 
 /* local path */ 
-
-%let path=C:\Users\a_mangin\Documents\coblance\new;
-
-
-
-
-
 %global pathRAW path pathin pathout DATEFILE study local_folder;   /* Declaration des variables globales ne pas toucher*/
-%let pathRAW=C:\Users\a_mangin\Documents\coblance\new;
+
+%let path=C:\Users\a_mangin\Documents\GitHub\COB;
 
 /* -------------------------PARTIE A CUSTO------------------------------------------*/
 /* Declaration des chemins et variables globales */
@@ -30,22 +24,8 @@
 /* -------------------------NE PAS TOUCHER AU RESTE SANS SAVOIR CE QU'ON FAIT ! ------------------------------------------*/
 
 
-
-/* Inclusion de l'utilitaire Git pour gerer les macros depuis le depot Git */
-%include "\\nas-01\SBE_ETUDES\COBLANCE\11-DataBase\GITHUB\git_utils.sas";  /* Chemin du script d'installation Git */
-
-/* URL du depot Git contenant les macros de chargement de donnees */
-%let git_url = https://github.com/sbemangin/COBLANCE.git;
-%let local_folder=GIT_COBLANCE;
-/* Installation de la version specifique des macros depuis le depot Git */
-option mprint=no;
-%install_git(dir_path = &path, git_url = &git_url, version = 535ec77, local_folder = &local_folder);
-
-/* Affichage de messages de log pour la version installee */
-%put WARNING: INSTALL_GIT: git_macro_version = &git_macro_version;
-%put &pathin; /* Chemin d'entree pour confirmation */
-
-
+%let pathprog = C:\Users\a_mangin\Documents\GitHub\COB;
+%include "&pathprog\_autoexec.sas";  /* Chemin du script d'installation Git */
 
 
 %macro update_raw(update=0);
@@ -70,14 +50,19 @@ libname ora_suiv  clear;
 %end;
 %mend;
 
-%update_raw(update=1);
+%update_raw(update=1); /* mettre update=0 pour ne pas mettre à jour les données a partir de la base oracle */
 
 
-%Run_mapping(update=1);
+%Run_mapping(update=1); /* mettre update=0 pour ne pas relancer le mapping et lire les données mappé déja présente */
 
 
 
 
+
+/*
+brouillon de selection patient a partir d'imagerie et de T d'RTUV
+
+*/
 
 data imagerie;
 set stu.cl_imagerie;
@@ -179,7 +164,6 @@ data resume2;
 set resume;
 where BRA_INCL=1 and ( critinc=1 or (critinc=2  and TTIRTV=1)) and TF>6 and IM_done="1";
 run;
-
 
 
 

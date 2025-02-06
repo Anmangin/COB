@@ -148,7 +148,7 @@ quit;
 * Necessite d'avoir lancer mapping anapath.sas;
 * PG : PK on modifie 01-093 ici et pas dans anapath. A revoir;
 
-data tnm;set stu.AN_TNM_INCL ; keep anumpat AJCC;run;
+data tnm;set stu.AN_TNM_INCL ; keep anumpat MF AJCC;run;
 
 
 * Merge les 2 tables;
@@ -176,7 +176,7 @@ RUN;
 proc sql noprint; create table meta_image as select distinct anumpat, 1 as  meta_imag from Imagerie;quit;
 DATA Meta_descpat;
 SET incl.Descpat;
-KEEP anumpat metast PATMETA;
+KEEP anumpat metast PATMETA D_META META_LOC;
 IF metast = 1 or patmeta = 1;
 RUN;
 
@@ -186,7 +186,7 @@ DATA Meta_final;
 MERGE Meta_descpat(IN = desc) Meta_final(IN = incl) meta_image (in=image);
 BY anumpat;
 IF incl;
-IF desc  or meta_imag THEN metaf = 1;
+IF desc   THEN metaf = 1;
 /*drop meta_imag;*/
 RUN;
 
@@ -213,18 +213,42 @@ MERGE chimerge(IN = desc) Meta_final(IN = incl);
 BY anumpat;
 IF not desc THEN imchm = 2;
 IF imchmin = 6 THEN metaf = 1;
+IF imchmin = 6 then METACHIM=1;
+
 RUN;
 proc sort nodupkey; by anumpat;run;
+
+proc format;
+value meta_chim
+-1="Oui, meta non précisé"
+1="Oui, ligne meta"
+2="Non";
+run;
+
+
+data anameta;
+set stu.An_anameta;
+if v=1 and NUMANAP ne "P15.7583";
+keep anumpat MTDPREL MTORG MTAUORG;
+run;
+proc sort nodupkey;by anumpat;run;
+proc sql noprint; create table Meta_final2 as select * from Meta_final a left join anameta b on a.anumpat=b.anumpat;quit;
 data Meta_final;
-retain  anumpat bra_incl METAST PATMETA  meta_imag metaf AJCC IMCHM;
-set Meta_final;
-keep anumpat bra_incl METAST PATMETA  meta_imag metaf AJCC IMCHM;
-label METAST= "metastase symptomatique ( inclusion)"
+retain  anumpat DINCL bra_incl CRITINC NSDDC META_chm METAST PATMETA D_META META_LOC MTDPREL MTORG MTAUORG  meta_imag  AJCC MF IMCHM metaf;
+set Meta_final2;
+format META_chm meta_chim.;
+label META_chm="Ligne metastastique";
+if METACHIM=1 then META_chm=1;
+else if IMCHM=1  then META_chm=-1;
+else if IMCHM=2 then META_chm=2;
+label bra_incl = "Bras à l'inclusion "
+METAST= "metastase symptomatique ( inclusion)"
 PATMETA=" patient metastatique déclaré dans le CRF à l'inclusion"
 meta_imag="Patient metastatique trouvé via l'imagerie"
 metaf="Patient metastatique Final";
 if metaf=0 then metaf=2;
 format metaf meta_imag PATMETAINCL.;
+drop IMCHM METACHIM IMCHMIN DEXCL;
 run;
 data stu.PATMETA;
 set  Meta_final;

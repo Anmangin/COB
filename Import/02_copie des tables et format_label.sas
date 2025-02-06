@@ -69,18 +69,18 @@ OPTION FMTSEARCH =  ( stu   format LIBRARy) ;
  * -------------------------Etape 1 : acces et creation des libnames------------------------------;
 
 * Recupere les libname de RAW;
-%Getlib(RAWincl,&pathraw\incl);
-%Getlib(RAWsuiv,&pathraw\suiv);
-%Getlib(RAWanap,&pathraw\anap);
-%Getlib(RAWrel,&pathraw\relec);
+%Getlib(RAWincl,&path\load\RAW\incl);
+%Getlib(RAWsuiv,&path\load\RAW\suiv);
+%Getlib(RAWanap,&path\load\RAW\anap);
+%Getlib(RAWrel,&path\load\RAW\relec);
 
 
 * Recupere les libnames de travail (vide e ce moment le);
-%Getlib(incl,&path\DB\incl);
-%Getlib(suiv,&path\DB\suiv);
-%Getlib(anap,&path\DB\anap);
-%Getlib(stu,&path\DB\stu);
-%Getlib(rel,&path\DB\relec);
+%Getlib(incl,&path\load\incl);
+%Getlib(suiv,&path\load\suiv);
+%Getlib(anap,&path\load\anap);
+%Getlib(stu,&path\load\stu);
+%Getlib(rel,&path\load\relec);
 
 * Copie les libnames de RAW dans les libnames de travail;
 
@@ -93,6 +93,14 @@ PROC IMPORT OUT= stu.variant DATAFILE= "\\nas-01\sbe_etudes\COBLANCE\10-informat
 SHEET="Feuil1";
 GETNAMES=YES;
 RUN;
+
+data stu.variant;
+set stu.variant;
+rename N__Inclusion_Coblance=anumpat
+T_in_patient_report=TVAR;
+label N__Inclusion_Coblance=anumpat
+T_in_patient_report="TVAR";
+run;
 
 PROC IMPORT OUT= stu.consent DATAFILE= "\\nas-01\SBE_ETUDES\COBLANCE\11-DataBase\retrait de consentement\BDD retrait consent.xlsx" DBMS = xlsx REPLACE;
 SHEET="Feuil1";
