@@ -12,9 +12,21 @@
 
 
 /* local path */ 
-%global pathRAW path pathin pathout DATEFILE study local_folder;   /* Declaration des variables globales ne pas toucher*/
+%global  path   DATEFILE study ;   /* Declaration des variables globales ne pas toucher*/
 
 %let path=C:\Users\a_mangin\Documents\GitHub\COB;
+
+
+%let daterep=%sysfunc(today(),date8.);
+%let datetemp=%sysfunc(today(),yymmdd9.);
+data _null_;test=strip("&datetemp");datefileL=tranwrd(test,"-",".");call symputx('datefile',datefileL);run;
+
+%put &daterep;
+%put &datefile;
+
+/*%let ACTUEL=ACTUEL;*/
+%let ACTUEL=&datefile;
+%put &actuel;
 
 /* -------------------------PARTIE A CUSTO------------------------------------------*/
 /* Declaration des chemins et variables globales */
@@ -24,8 +36,8 @@
 /* -------------------------NE PAS TOUCHER AU RESTE SANS SAVOIR CE QU'ON FAIT ! ------------------------------------------*/
 
 
-%let pathprog = C:\Users\a_mangin\Documents\GitHub\COB;
-%include "&pathprog\_autoexec.sas";  /* Chemin du script d'installation Git */
+%let pathprog = C:\Users\a_mangin\Documents\GitHub\COB\Commun_France_cohorte;
+%include "&pathprog/00_autoexec.sas";  /* Chemin du script d'installation Git */
 
 
 %macro update_raw(update=0);
@@ -50,7 +62,7 @@ libname ora_suiv  clear;
 %end;
 %mend;
 
-%update_raw(update=1); /* mettre update=0 pour ne pas mettre à jour les données a partir de la base oracle */
+%update_raw(update=0); /* mettre update=0 pour ne pas mettre à jour les données a partir de la base oracle */
 
 
 %Run_mapping(update=1); /* mettre update=0 pour ne pas relancer le mapping et lire les données mappé déja présente */
