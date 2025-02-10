@@ -22,7 +22,8 @@ run;
 
 Proc sql noprint;
 create table stu.resume as
-select a.anumpat,a.nbvisit,a.centre,a.SITE AS trialsite,a.SEXE,a.DNAIS,DINTRW, TPBRA as BRA_INCL, IDENBRA.DINCL as DINCL,FUME,CRITINC ,NSDCD,CAUSDC,SORTETU,DSORTETU,MOTIFSORTI,MOTIFP,PDV,PDVDATE,PDVCOMMENT
+select a.anumpat,a.nbvisit,a.centre,a.SITE AS trialsite,a.SEXE,a.DNAIS,DINTRW, TPBRA as BRA_INCL, IDENBRA.DINCL as DINCL,FUME,CRITINC , NSDDC
+,CAUSDC,SORTETU,DSORTETU,MOTIFSORTI,MOTIFP,PDV,PDVDATE,PDVCOMMENT
 FROM INCL.DEMOGR a
 left join INCL.Idenbra b on a.anumpat=b.anumpat 
 left join INCL.Descpat c on a.anumpat=c.anumpat 

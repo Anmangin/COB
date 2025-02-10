@@ -1,0 +1,2386 @@
+1                                                     Le Système SAS                         09:34 Monday, February 1, 2021
+
+NOTE: Copyright (c) 2002-2012 by SAS Institute Inc., Cary, NC, USA. 
+NOTE: SAS (r) Proprietary Software 9.4 (TS1M1) 
+      Licensed to INSTITUT GUSTAVE ROUSSY VIA NOVENCIA LIC PC, Site 70247566.
+NOTE: This session is executing on the X64_7PRO  platform.
+
+
+
+NOTE: Updated analytical products:
+      
+      SAS/STAT 13.1
+
+WARNING: Your system is scheduled to expire on March 14, 2021, which is 41 days from now. The SAS System will no longer 
+         function on or after that date. Please contact your SAS Installation Representative to obtain your updated SAS 
+         Installation Data (SID) file, which includes SETINIT information.
+Pour trouver le nom de votre représentant d'installation SAS, allez sur http://support.sas.com/repfinder, et indiquez 
+votre numéro de site 70247566 et nom d'entreprise sous la forme INSTITUT GUSTAVE ROUSSY VIA NOVENCIA LIC PC. Dans la liste 
+SAS REP fournie, recherchez le REP pour le système d'exploitation Windows.
+NOTE: Additional host information:
+
+ X64_7PRO WIN 6.1.7601 Service Pack 1 Workstation
+
+NOTE: L'initialisation de SAS used:
+      real time           0.29 secondes
+      cpu time            0.15 secondes
+      
+1          
+2          %macro importFICHE(lib,nom);
+3          proc sql nowarn noprint;
+4          create table Schedul as
+5          select * from &lib..studyvisitcrfpage
+6          left join &lib..studyvisit on studyvisitcrfpage.visitid=studyvisit.visitid
+7          left join &lib..Crfpage on studyvisitcrfpage.CRFPAGEID=Crfpage.CRFPAGEID
+8          order by VISITORDER ,CRFPAGEORDER;
+9          create table ScedulPRpat as
+10         select * from Schedul, &lib..trialsubject;
+11         QUit;
+12         %suppr(Schedul)
+13         
+14         data ScedulPRpat;
+15         retain localidentifier1 trialsite personid VISITNAME VISITCODE VISITORDER CRFTITLE CRFPAGECODE CRFPAGEORDER
+15       ! visitid CRFPAGEID;
+16         set ScedulPRpat;
+17         keep localidentifier1 trialsite personid VISITNAME VISITCODE VISITORDER CRFTITLE CRFPAGECODE CRFPAGEORDER
+17       ! visitid CRFPAGEID;
+18         run;
+19         data ScedulPRpat;
+20         set ScedulPRpat;
+21         rename trialsite=site;
+22         run;
+23         
+24         proc sql;
+25         create table &nom as
+26         select ScedulPRpat.*,VISITCYCLENUMBER,CRFPAGECYCLENUMBER, CRFPAGESTATUS,DISCREPANCYSTATUS,LOCKSTATUS,SDVSTATUS
+26       ! from ScedulPRpat
+27         left join &lib..Crfpageinstance on
+28         ScedulPRpat.visitid=Crfpageinstance.visitid and
+29         ScedulPRpat.site=Crfpageinstance.trialsite and
+30         ScedulPRpat.personid=Crfpageinstance.personid and
+31         ScedulPRpat.CRFPAGEID=Crfpageinstance.CRFPAGEID;;
+32         QUit;
+33         %suppr(ScedulPRpat);
+2                                                     Le Système SAS                         09:34 Monday, February 1, 2021
+
+34         
+35         %mend;
+36         
+37         
+38         %importFICHE(INCL,relance_INCL);
+WARNING: The Logiciel Base SAS product with which SQL is associated will be expiring soon, and is currently in warning 
+         mode to indicate this upcoming expiration. Please run PROC SETINIT to obtain more information on your warning 
+         period.
+ERROR: Libref INCL non attribué.
+ERROR: Libref INCL non attribué.
+ERROR: Libref INCL non attribué.
+NOTE: PROC SQL set option NOEXEC and will continue to check the syntax of statements.
+NOTE: Statement not executed due to NOEXEC option.
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+WARNING: Apparent invocation of macro SUPPR not resolved.
+
+
+ERROR: Le fichier WORK.SCEDULPRPAT.DATA n'existe pas.
+
+WARNING: La variable trialsite dans la liste DROP, KEEP, ou RENAME n'a jamais été référencée.
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: SAS set option OBS=0 and will continue to check statements. This might cause NOTE: No observations in data set.
+WARNING: The data set WORK.SCEDULPRPAT may be incomplete.  When this step was stopped there were 0 observations and 0 
+         variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+
+ERROR: Table WORK.SCEDULPRPAT n'a pas de colonnes. PROC SQL nécessite que chacune de ses tables ait au moins 1 colonne.
+ERROR: Libref INCL non attribué.
+NOTE: PROC SQL set option NOEXEC and will continue to check the syntax of statements.
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+WARNING: Apparent invocation of macro SUPPR not resolved.
+39         %importFICHE(SUIV,relance_SUIV);
+
+
+ERROR: Libref SUIV non attribué.
+ERROR: Libref SUIV non attribué.
+ERROR: Libref SUIV non attribué.
+NOTE: PROC SQL set option NOEXEC and will continue to check the syntax of statements.
+NOTE: Statement not executed due to NOEXEC option.
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+WARNING: Apparent invocation of macro SUPPR not resolved.
+
+
+
+WARNING: La variable trialsite dans la liste DROP, KEEP, ou RENAME n'a jamais été référencée.
+3                                                     Le Système SAS                         09:34 Monday, February 1, 2021
+
+NOTE: The data set WORK.SCEDULPRPAT has 0 observations and 0 variables.
+WARNING: Table WORK.SCEDULPRPAT non remplacée car cette étape a été interrompue.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+ERROR: Table WORK.SCEDULPRPAT n'a pas de colonnes. PROC SQL nécessite que chacune de ses tables ait au moins 1 colonne.
+ERROR: Libref SUIV non attribué.
+NOTE: PROC SQL set option NOEXEC and will continue to check the syntax of statements.
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+WARNING: Apparent invocation of macro SUPPR not resolved.
+40         
+
+
+41         proc format ;
+41       !              value base 1="Inclusion" 2="Suivi";
+41       !                                                 run;
+
+WARNING: RUN statement ignored due to previous errors. Submit QUIT; to terminate the procedure.
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.03 secondes
+      cpu time            0.00 secondes
+      
+
+42         data relance_INCL;retain base;set relance_INCL;format base base.;base=1;run;
+                                                                      _____
+                                                                      48
+ERROR: Le fichier WORK.RELANCE_INCL.DATA n'existe pas.
+
+ERROR 48-59: The format BASE was not found or could not be loaded.
+
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set WORK.RELANCE_INCL may be incomplete.  When this step was stopped there were 0 observations and 1 
+         variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+43         data relance_SUIV;retain base;set relance_SUIV;format base base.;base=2;run;
+                                                                      _____
+                                                                      48
+ERROR: Le fichier WORK.RELANCE_SUIV.DATA n'existe pas.
+
+ERROR 48-59: The format BASE was not found or could not be loaded.
+
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set WORK.RELANCE_SUIV may be incomplete.  When this step was stopped there were 0 observations and 1 
+         variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+44         
+45         data Status_fiche;
+4                                                     Le Système SAS                         09:34 Monday, February 1, 2021
+
+46         set relance_INCL relance_suiv;
+47         rename site=trialsite;
+48         if CRFTITLE NE "";
+49         run;
+
+WARNING: La variable site dans la liste DROP, KEEP, ou RENAME n'a jamais été référencée.
+NOTE: The data set WORK.STATUS_FICHE has 0 observations and 2 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+WARNING: Apparent invocation of macro SUPPR not resolved.
+50         %suppr(relance_INCL);
+           _
+           180
+
+ERROR 180-322: Statement is not valid or it is used out of proper order.
+
+WARNING: Apparent invocation of macro SUPPR not resolved.
+51         %suppr(relance_suiv);
+           _
+           180
+
+ERROR 180-322: Statement is not valid or it is used out of proper order.
+
+52         
+53         
+54         
+55         
+56         
+57         
+58         proc sql noprint;
+58       !                   create table correctincl as select  1 as base,PERSONID, trialsite, visitid, CRFPAGEID,
+58       ! VISITCYCLENUMBER,CRFPAGECYCLENUMBER, count(CASE WHEN RESPONSESTATUS=10 THEN 1 ELSE . END) as st from
+58       ! ora_stui.dataitemresponse group by PERSONID, trialsite, visitid, CRFPAGEID, VISITCYCLENUMBER,CRFPAGECYCLENUMBER;
+58       ! quit;
+ERROR: Libref ORA_STUI non attribué.
+NOTE: PROC SQL set option NOEXEC and will continue to check the syntax of statements.
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+
+59         proc sql noprint;
+59       !                   create table correctSUIV as select DISTINCT 2 as base,PERSONID, trialsite, visitid, CRFPAGEID,
+59       !  VISITCYCLENUMBER,CRFPAGECYCLENUMBER, count(CASE WHEN RESPONSESTATUS=10 THEN 1 ELSE . END) as st as st from
+59       ! ora_stus.dataitemresponse group by PERSONID, trialsite, visitid, CRFPAGEID, VISITCYCLENUMBER,CRFPAGECYCLENUMBER
+59       ! ;quit;
+ERROR: Libref ORA_STUS non attribué.
+NOTE: PROC SQL set option NOEXEC and will continue to check the syntax of statements.
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+60         
+61         
+
+5                                                     Le Système SAS                         09:34 Monday, February 1, 2021
+
+
+62         data correct;
+63         set correctincl correctSUIV;
+ERROR: Le fichier WORK.CORRECTINCL.DATA n'existe pas.
+ERROR: Le fichier WORK.CORRECTSUIV.DATA n'existe pas.
+64         if ST = 0 then delete;
+65         run;
+
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set WORK.CORRECT may be incomplete.  When this step was stopped there were 0 observations and 1 
+         variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.01 secondes
+      
+
+WARNING: Apparent invocation of macro SUPPR not resolved.
+66         %suppr(correctincl);
+           _
+           180
+
+ERROR 180-322: Statement is not valid or it is used out of proper order.
+
+WARNING: Apparent invocation of macro SUPPR not resolved.
+67         %suppr(correctSUIV);
+           _
+           180
+
+ERROR 180-322: Statement is not valid or it is used out of proper order.
+
+68         proc sort data= correct;by base PERSONID trialsite visitid CRFPAGEID VISITCYCLENUMBER CRFPAGECYCLENUMBER ; run;
+ERROR: Variable BASE not found.
+ERROR: Variable PERSONID not found.
+ERROR: Variable TRIALSITE not found.
+ERROR: Variable VISITID not found.
+ERROR: Variable CRFPAGEID not found.
+ERROR: Variable VISITCYCLENUMBER not found.
+ERROR: Variable CRFPAGECYCLENUMBER not found.
+
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+
+69         proc sort data= Status_fiche;by base PERSONID trialsite visitid CRFPAGEID VISITCYCLENUMBER CRFPAGECYCLENUMBER ;
+69       ! run;
+ERROR: Variable PERSONID not found.
+ERROR: Variable TRIALSITE not found.
+ERROR: Variable VISITID not found.
+ERROR: Variable CRFPAGEID not found.
+ERROR: Variable VISITCYCLENUMBER not found.
+ERROR: Variable CRFPAGECYCLENUMBER not found.
+
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+6                                                     Le Système SAS                         09:34 Monday, February 1, 2021
+
+
+70         data Status_fiche;merge correct Status_fiche;by base PERSONID trialsite visitid CRFPAGEID VISITCYCLENUMBER
+70       ! CRFPAGECYCLENUMBER;run;
+
+NOTE: The data set WORK.STATUS_FICHE has 0 observations and 3 variables.
+WARNING: Table WORK.STATUS_FICHE non remplacée car cette étape a été interrompue.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+71         data Status_fiche;set Status_fiche;format CRFPAGESTATUS responsestatus.; if st>10 then CRFPAGESTATUS=-30; else
+                                                                   _______________
+                                                                   48
+71       ! if ST NE . then CRFPAGESTATUS=10  ;run;
+
+ERROR 48-59: The format RESPONSESTATUS was not found or could not be loaded.
+
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set WORK.STATUS_FICHE may be incomplete.  When this step was stopped there were 0 observations and 4 
+         variables.
+WARNING: Table WORK.STATUS_FICHE non remplacée car cette étape a été interrompue.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+
+WARNING: Apparent invocation of macro SUPPR not resolved.
+72         %suppr(correct);
+           _
+           180
+
+ERROR 180-322: Statement is not valid or it is used out of proper order.
+
+73         
+74         data Status_fiche;set Status_fiche; where localidentifier1 NE "" and LOCALIDENTIFIER1 ne "personne non
+74       ! identifiee";
+ERROR: Variable localidentifier1 non présente dans le fichier WORK.STATUS_FICHE.
+75         where CRFPAGESTATUS NE .;
+ERROR: Variable CRFPAGESTATUS non présente dans le fichier WORK.STATUS_FICHE.
+76         run;
+
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set WORK.STATUS_FICHE may be incomplete.  When this step was stopped there were 0 observations and 2 
+         variables.
+WARNING: Table WORK.STATUS_FICHE non remplacée car cette étape a été interrompue.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+77         
+78         data Status_fiche;set Status_fiche;
+79         where CRFTITLE NE "" and localidentifier1 NE "" and find(localidentifier1,"Suppr")=0;
+ERROR: Variable localidentifier1 non présente dans le fichier WORK.STATUS_FICHE.
+80         run;
+
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set WORK.STATUS_FICHE may be incomplete.  When this step was stopped there were 0 observations and 2 
+         variables.
+7                                                     Le Système SAS                         09:34 Monday, February 1, 2021
+
+WARNING: Table WORK.STATUS_FICHE non remplacée car cette étape a été interrompue.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+81         
+82         
+83         data Status_fiche;
+84         set Status_fiche;
+85         if CRFPAGESTATUS=. or CRFPAGESTATUS=-10 or CRFPAGESTATUS=-11 or CRFPAGESTATUS=-5  or CRFPAGESTATUS=-8 then
+85       ! statut="Vierge";
+86         if CRFPAGESTATUS=0 or CRFPAGESTATUS=25 then statut="OK";
+87         if CRFPAGESTATUS=10 or CRFPAGESTATUS=30 or DISCREPANCYSTATUS=30 then statut="QU";
+88         if CRFPAGESTATUS=-30 then statut="MI";
+89         if LOCKSTATUS>0 then delete;
+90         rename localidentifier1 = anumpat;
+91         run;
+
+WARNING: La variable localidentifier1 dans la liste DROP, KEEP, ou RENAME n'a jamais été référencée.
+NOTE: The data set WORK.STATUS_FICHE has 0 observations and 6 variables.
+WARNING: Table WORK.STATUS_FICHE non remplacée car cette étape a été interrompue.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+92         
+93         data Status_fiche;
+94         set Status_fiche;
+95         if substr(VISITCODE,1,5)="VISIT" then NBVISIT=VISITORDER-1;
+96         if NBVISIT=. then NBVISIT=0;
+97         run;
+
+NOTE: Numeric values have been converted to character values at the places given by: (Line):(Column).
+      95:11   
+NOTE: The data set WORK.STATUS_FICHE has 0 observations and 5 variables.
+WARNING: Table WORK.STATUS_FICHE non remplacée car cette étape a été interrompue.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.01 secondes
+      
+
+98         proc sort ;by anumpat NBVISIT;run;
+ERROR: Variable ANUMPAT not found.
+ERROR: Variable NBVISIT not found.
+
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+99         
+100        
+101        
+
+
+102        data planing_planing1;
+103        set suiv.planing_planing1;
+ERROR: Libref SUIV non attribué.
+104        where ANUMPAT NE "" and LISTVISIT NE . and DVISIT NE .;
+8                                                     Le Système SAS                         09:34 Monday, February 1, 2021
+
+105        rename recipro=recipro2;
+106        keep ANUMPAT DVISIT LISTVISIT BRA NBVISIT RECIPRO VNF;
+107        
+108        run;
+
+WARNING: La variable ANUMPAT dans la liste DROP, KEEP, ou RENAME n'a jamais été référencée.
+WARNING: La variable DVISIT dans la liste DROP, KEEP, ou RENAME n'a jamais été référencée.
+WARNING: La variable LISTVISIT dans la liste DROP, KEEP, ou RENAME n'a jamais été référencée.
+WARNING: La variable BRA dans la liste DROP, KEEP, ou RENAME n'a jamais été référencée.
+WARNING: La variable NBVISIT dans la liste DROP, KEEP, ou RENAME n'a jamais été référencée.
+WARNING: La variable RECIPRO dans la liste DROP, KEEP, ou RENAME n'a jamais été référencée.
+WARNING: La variable VNF dans la liste DROP, KEEP, ou RENAME n'a jamais été référencée.
+WARNING: La variable recipro dans la liste DROP, KEEP, ou RENAME n'a jamais été référencée.
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set WORK.PLANING_PLANING1 may be incomplete.  When this step was stopped there were 0 observations and 0 
+         variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+109        
+110        %macro planing_rec;
+111        data planing_planing1;
+112        set planing_planing1;
+113        bra2=lag(BRA);
+114        if BRA=. then BRA=bra2;
+115        run;
+116        %mend;
+117        %planing_rec;
+
+NOTE: The data set WORK.PLANING_PLANING1 has 0 observations and 2 variables.
+WARNING: Table WORK.PLANING_PLANING1 non remplacée car cette étape a été interrompue.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+118        %planing_rec;
+
+NOTE: The data set WORK.PLANING_PLANING1 has 0 observations and 2 variables.
+WARNING: Table WORK.PLANING_PLANING1 non remplacée car cette étape a été interrompue.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+119        %planing_rec;
+
+NOTE: The data set WORK.PLANING_PLANING1 has 0 observations and 2 variables.
+WARNING: Table WORK.PLANING_PLANING1 non remplacée car cette étape a été interrompue.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+120        %planing_rec;
+
+NOTE: The data set WORK.PLANING_PLANING1 has 0 observations and 2 variables.
+WARNING: Table WORK.PLANING_PLANING1 non remplacée car cette étape a été interrompue.
+NOTE: DATA statement used (Total process time):
+9                                                     Le Système SAS                         09:34 Monday, February 1, 2021
+
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+121        %planing_rec;
+
+NOTE: The data set WORK.PLANING_PLANING1 has 0 observations and 2 variables.
+WARNING: Table WORK.PLANING_PLANING1 non remplacée car cette étape a été interrompue.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.01 secondes
+      
+
+122        %planing_rec;
+
+NOTE: The data set WORK.PLANING_PLANING1 has 0 observations and 2 variables.
+WARNING: Table WORK.PLANING_PLANING1 non remplacée car cette étape a été interrompue.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+123        %planing_rec;
+
+NOTE: The data set WORK.PLANING_PLANING1 has 0 observations and 2 variables.
+WARNING: Table WORK.PLANING_PLANING1 non remplacée car cette étape a été interrompue.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+124        %planing_rec;
+
+NOTE: The data set WORK.PLANING_PLANING1 has 0 observations and 2 variables.
+WARNING: Table WORK.PLANING_PLANING1 non remplacée car cette étape a été interrompue.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+125        %planing_rec;
+
+NOTE: The data set WORK.PLANING_PLANING1 has 0 observations and 2 variables.
+WARNING: Table WORK.PLANING_PLANING1 non remplacée car cette étape a été interrompue.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+126        %planing_rec;
+
+NOTE: The data set WORK.PLANING_PLANING1 has 0 observations and 2 variables.
+WARNING: Table WORK.PLANING_PLANING1 non remplacée car cette étape a été interrompue.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+127        
+128        data planing_planing1;
+129        set planing_planing1;
+10                                                    Le Système SAS                         09:34 Monday, February 1, 2021
+
+130        drop bra2;
+131        run;
+
+WARNING: La variable bra2 dans la liste DROP, KEEP, ou RENAME n'a jamais été référencée.
+NOTE: The data set WORK.PLANING_PLANING1 has 0 observations and 0 variables.
+WARNING: Table WORK.PLANING_PLANING1 non remplacée car cette étape a été interrompue.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+132        
+133        
+134        %macro addvisit;
+135        proc sql noprint; create table test1 as  select anumpat , max(NBVISIT) as NBVISIT, 1 as a from planing_planing1
+135      ! group by anumpat;quit;
+136        proc sql noprint; create table test2 as  select planing_planing1.* from test1 a left join planing_planing1 b on
+136      ! a.anumpat=B.anumpat and a.NBVISIT=B.NBVISIT ;quit;
+137        data test2;
+138        set test2;
+139        NBVISIT=NBVISIT+1;
+140        if LISTVISIT = 1 or LISTVISIT = 9 then DVISIT = DVISIT + 3*30 ;
+141        if LISTVISIT = 2 then DVISIT = DVISIT + 6*30 ;
+142        if LISTVISIT > 2 and LISTVISIT NE 9  then DVISIT = DVISIT + 365 ;
+143        if LISTVISIT = 8 then delete;
+144        if LISTVISIT<8 then LISTVISIT=LISTVISIT+1;
+145        if LISTVISIT=9 then LISTVISIT=1;
+146        run;
+147        data planing_planing1;
+148        set planing_planing1 test2;
+149        run;
+150        proc sort ;by anumpat NBVISIT;run;
+151        %suppr(test1);
+152        %MEND;
+153        %addvisit;
+ERROR: Table WORK.PLANING_PLANING1 n'a pas de colonnes. PROC SQL nécessite que chacune de ses tables ait au moins 1 
+       colonne.
+ERROR: The following columns were not found in the contributing tables: anumpat, NBVISIT.
+NOTE: PROC SQL set option NOEXEC and will continue to check the syntax of statements.
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.01 secondes
+      
+
+
+ERROR: Le fichier WORK.TEST1.DATA n'existe pas.
+ERROR: Table WORK.PLANING_PLANING1 n'a pas de colonnes. PROC SQL nécessite que chacune de ses tables ait au moins 1 
+       colonne.
+NOTE: PROC SQL set option NOEXEC and will continue to check the syntax of statements.
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+
+ERROR: Le fichier WORK.TEST2.DATA n'existe pas.
+
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set WORK.TEST2 may be incomplete.  When this step was stopped there were 0 observations and 3 variables.
+11                                                    Le Système SAS                         09:34 Monday, February 1, 2021
+
+NOTE: DATA statement used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+
+
+NOTE: The data set WORK.PLANING_PLANING1 has 0 observations and 3 variables.
+WARNING: Table WORK.PLANING_PLANING1 non remplacée car cette étape a été interrompue.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+ERROR: Variable ANUMPAT not found.
+
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+WARNING: Apparent invocation of macro SUPPR not resolved.
+154        %addvisit;
+
+
+ERROR: Table WORK.PLANING_PLANING1 n'a pas de colonnes. PROC SQL nécessite que chacune de ses tables ait au moins 1 
+       colonne.
+ERROR: The following columns were not found in the contributing tables: anumpat, NBVISIT.
+NOTE: PROC SQL set option NOEXEC and will continue to check the syntax of statements.
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+
+ERROR: Le fichier WORK.TEST1.DATA n'existe pas.
+ERROR: Table WORK.PLANING_PLANING1 n'a pas de colonnes. PROC SQL nécessite que chacune de ses tables ait au moins 1 
+       colonne.
+NOTE: PROC SQL set option NOEXEC and will continue to check the syntax of statements.
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+
+
+NOTE: The data set WORK.TEST2 has 0 observations and 3 variables.
+WARNING: Table WORK.TEST2 non remplacée car cette étape a été interrompue.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+
+NOTE: The data set WORK.PLANING_PLANING1 has 0 observations and 3 variables.
+WARNING: Table WORK.PLANING_PLANING1 non remplacée car cette étape a été interrompue.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+12                                                    Le Système SAS                         09:34 Monday, February 1, 2021
+
+      
+
+ERROR: Variable ANUMPAT not found.
+
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+WARNING: Apparent invocation of macro SUPPR not resolved.
+155        %addvisit;
+
+
+ERROR: Table WORK.PLANING_PLANING1 n'a pas de colonnes. PROC SQL nécessite que chacune de ses tables ait au moins 1 
+       colonne.
+ERROR: The following columns were not found in the contributing tables: anumpat, NBVISIT.
+NOTE: PROC SQL set option NOEXEC and will continue to check the syntax of statements.
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+
+ERROR: Le fichier WORK.TEST1.DATA n'existe pas.
+ERROR: Table WORK.PLANING_PLANING1 n'a pas de colonnes. PROC SQL nécessite que chacune de ses tables ait au moins 1 
+       colonne.
+NOTE: PROC SQL set option NOEXEC and will continue to check the syntax of statements.
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.01 secondes
+      
+
+
+
+NOTE: The data set WORK.TEST2 has 0 observations and 3 variables.
+WARNING: Table WORK.TEST2 non remplacée car cette étape a été interrompue.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+
+NOTE: The data set WORK.PLANING_PLANING1 has 0 observations and 3 variables.
+WARNING: Table WORK.PLANING_PLANING1 non remplacée car cette étape a été interrompue.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+ERROR: Variable ANUMPAT not found.
+
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+WARNING: Apparent invocation of macro SUPPR not resolved.
+156        
+
+13                                                    Le Système SAS                         09:34 Monday, February 1, 2021
+
+
+157        proc sort data=planing_planing1;by anumpat NBVISIT;run;
+ERROR: Variable ANUMPAT not found.
+ERROR: Variable NBVISIT not found.
+
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+158        
+
+
+159        proc sql noprint;
+159      !                   create table Status_fiche2 as select Status_fiche.*, dvisit, LISTVISIT,BRA,recipro2,VNF from
+159      ! Status_fiche
+160        left join planing_planing1 on Status_fiche.anumpat=planing_planing1.anumpat and
+160      ! Status_fiche.NBVISIT=planing_planing1.NBVISIT;
+ERROR: Table WORK.PLANING_PLANING1 n'a pas de colonnes. PROC SQL nécessite que chacune de ses tables ait au moins 1 
+       colonne.
+ERROR: Column anumpat could not be found in the table/view identified with the correlation name STATUS_FICHE.
+ERROR: Column anumpat could not be found in the table/view identified with the correlation name STATUS_FICHE.
+ERROR: Column anumpat could not be found in the table/view identified with the correlation name PLANING_PLANING1.
+ERROR: Column anumpat could not be found in the table/view identified with the correlation name PLANING_PLANING1.
+ERROR: Column NBVISIT could not be found in the table/view identified with the correlation name STATUS_FICHE.
+ERROR: Column NBVISIT could not be found in the table/view identified with the correlation name STATUS_FICHE.
+ERROR: Column NBVISIT could not be found in the table/view identified with the correlation name PLANING_PLANING1.
+ERROR: Column NBVISIT could not be found in the table/view identified with the correlation name PLANING_PLANING1.
+ERROR: The following columns were not found in the contributing tables: BRA, dvisit, LISTVISIT, recipro2, VNF.
+NOTE: PROC SQL set option NOEXEC and will continue to check the syntax of statements.
+161        quit;
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+
+162        data Status_fiche;set Status_fiche2;run;
+ERROR: Le fichier WORK.STATUS_FICHE2.DATA n'existe pas.
+
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set WORK.STATUS_FICHE may be incomplete.  When this step was stopped there were 0 observations and 0 
+         variables.
+WARNING: Table WORK.STATUS_FICHE non remplacée car cette étape a été interrompue.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+WARNING: Apparent invocation of macro SUPPR not resolved.
+163        %suppr(Status_fiche2);
+           _
+           180
+
+ERROR 180-322: Statement is not valid or it is used out of proper order.
+
+WARNING: Apparent invocation of macro SUPPR not resolved.
+163                              %suppr(planing_planing1);
+                                 _
+                                 180
+14                                                    Le Système SAS                         09:34 Monday, February 1, 2021
+
+
+ERROR 180-322: Statement is not valid or it is used out of proper order.
+
+164        
+165        
+166        proc sql;
+167        create table desacF as
+168        select Localidentifier1 as anumpat,CRFPAGECODE,CRFPAGECYCLENUMBER,VISITNAME,VISITORDER,VISITORDER-1 as NBVISIT
+168      ! ,VISITCYCLENUMBER from ora_stus.dataitemresponse
+169        left join suiv.dataitem on dataitemresponse.DATAITEMID=dataitem.DATAITEMID
+170        left join suiv.trialsubject on dataitemresponse.personid=trialsubject.personid and
+170      ! dataitemresponse.trialsite=trialsubject.trialsite
+171        left join suiv.studyVISIT on dataitemresponse.VISITID=studyVISIT.VISITID
+172        left join suiv.CRFPAGE on dataitemresponse.CRFPAGEID=CRFPAGE.CRFPAGEID
+173        where dataitemcode="DESAC" and VALUECODE="1";
+ERROR: Libref ORA_STUS non attribué.
+ERROR: Libref SUIV non attribué.
+ERROR: Libref SUIV non attribué.
+ERROR: Libref SUIV non attribué.
+ERROR: Libref SUIV non attribué.
+NOTE: PROC SQL set option NOEXEC and will continue to check the syntax of statements.
+174        QUit;
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+175        
+176        
+
+
+177        data desacF;set desacF;DESAC=1;run;
+ERROR: Le fichier WORK.DESACF.DATA n'existe pas.
+
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set WORK.DESACF may be incomplete.  When this step was stopped there were 0 observations and 1 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+178        proc sort; by anumpat NBVISIT CRFPAGECODE;run;
+ERROR: Variable ANUMPAT not found.
+ERROR: Variable NBVISIT not found.
+ERROR: Variable CRFPAGECODE not found.
+
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+
+179        proc sort data=Status_fiche; by anumpat NBVISIT CRFPAGECODE;run;
+ERROR: Variable ANUMPAT not found.
+ERROR: Variable NBVISIT not found.
+ERROR: Variable CRFPAGECODE not found.
+
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 secondes
+15                                                    Le Système SAS                         09:34 Monday, February 1, 2021
+
+      cpu time            0.00 secondes
+      
+180        
+
+
+181        data Status_fiche;
+182        merge Status_fiche desacF;
+183        by anumpat NBVISIT CRFPAGECODE;
+184        run;
+
+NOTE: The data set WORK.STATUS_FICHE has 0 observations and 3 variables.
+WARNING: Table WORK.STATUS_FICHE non remplacée car cette étape a été interrompue.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.01 secondes
+      
+
+WARNING: Apparent invocation of macro SUPPR not resolved.
+185        %suppr(desacF);
+           _
+           180
+
+ERROR 180-322: Statement is not valid or it is used out of proper order.
+
+186        
+187        
+188         /*
+189        	   data QLQ1;set stu.Qlq_blm30;
+190        			where BLMURINJ NE . or BLMURINN NE .  or BLMUNIRVIT NE . 	;
+191        			BLM30=1;
+192        			keep localidentifier1 		visitname	   BLM30;
+193        			run;
+194        	   	data QLQ2;set stu.Qlq_bls24;
+195        			where  BLSURINJ NE . and BLSURINN NE . and ASEXE NE "" and BLSFIEVRE NE .;
+196        			bls24=1;
+197        			keep localidentifier1 visitname			   bls24;
+198        			run;
+199        
+200        
+201        	 proc sql noprint nowarn; create table Status_fiche2 as select * from Status_fiche left join qlq1
+202        on  Status_fiche.localidentifier1=qlq1.localidentifier1 and  Status_fiche.visitname=qlq1.visitname and
+202      ! (Status_fiche.crfpageid=10122 or Status_fiche.crfpageid=11690)
+203        	 left join qlq2	  on  Status_fiche.localidentifier1=qlq2.localidentifier1 and
+203      ! Status_fiche.visitname=qlq2.visitname and (Status_fiche.crfpageid=10154 or Status_fiche.crfpageid=10272)   ;quit
+203      ! ;
+204        */
+205        
+206        proc sql noprint;
+206      !                  create table Id_inc as select  a.localidentifier1, a.localidentifier1 as anumpat,
+206      ! DEXCL,b.DINCL , /*input(a.DNAIS,DDMMYY10.) as DNAIS format=DDMMYY10. */ a.dnais, TPBRA as
+206      ! bra_incl,CRITINC,NSDDC,
+207        DSORTETU, PDVDATE
+208        from incl.demogr a
+209        left join incl.Idenbra b on a.localidentifier1=b.localidentifier1
+210        left join incl.Exlusion c on a.localidentifier1=c.localidentifier1
+211        left join incl.descpat d on a.localidentifier1=d.localidentifier1
+212        left join suiv.planing e on a.localidentifier1=e.localidentifier1;
+ERROR: Libref INCL non attribué.
+ERROR: Libref INCL non attribué.
+ERROR: Libref INCL non attribué.
+ERROR: Libref INCL non attribué.
+16                                                    Le Système SAS                         09:34 Monday, February 1, 2021
+
+ERROR: Libref SUIV non attribué.
+NOTE: PROC SQL set option NOEXEC and will continue to check the syntax of statements.
+213        quit;
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+214        
+
+
+215        proc sql noprint;
+215      !                   create table Status_fiche2 as select * from Status_fiche a left join  Id_inc b on
+215      ! a.anumpat=b.localidentifier1;quit;
+ERROR: Le fichier WORK.ID_INC.DATA n'existe pas.
+NOTE: PROC SQL set option NOEXEC and will continue to check the syntax of statements.
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+216        
+217        
+218        
+
+
+219        data Status_fiche;
+220        set Status_fiche2;
+ERROR: Le fichier WORK.STATUS_FICHE2.DATA n'existe pas.
+221        CRFTITLE=CRFPAGEORDER||"-"||CRFTITLE;
+222        TempP_INCL=INTCK( 'month', DINCL, date() );
+223        rename anumpat=localidentifier1;
+224        
+225        run;
+
+NOTE: Numeric values have been converted to character values at the places given by: (Line):(Column).
+      221:10   221:29   
+NOTE: Character values have been converted to numeric values at the places given by: (Line):(Column).
+      221:27   
+WARNING: La variable anumpat dans la liste DROP, KEEP, ou RENAME n'a jamais été référencée.
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set WORK.STATUS_FICHE may be incomplete.  When this step was stopped there were 0 observations and 4 
+         variables.
+WARNING: Table WORK.STATUS_FICHE non remplacée car cette étape a été interrompue.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+226        
+227        data Status_fiche;set Status_fiche;
+228        where CRFTITLE NE "" and localidentifier1 NE "" and find(localidentifier1,"Suppr")=0;
+ERROR: Variable localidentifier1 non présente dans le fichier WORK.STATUS_FICHE.
+229        run;
+
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set WORK.STATUS_FICHE may be incomplete.  When this step was stopped there were 0 observations and 2 
+         variables.
+WARNING: Table WORK.STATUS_FICHE non remplacée car cette étape a été interrompue.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 secondes
+17                                                    Le Système SAS                         09:34 Monday, February 1, 2021
+
+      cpu time            0.00 secondes
+      
+
+230        
+231        data Status_fiche;
+232        set Status_fiche;
+233        fn_fol=DINCL + (6 * 365);
+234        if NSDDC NE . then fn_fol=NSDDC;
+235        if DSORTETU NE . then fn_fol=DSORTETU;
+236        if PDVDATE NE . then fn_fol=PDVDATE;
+237        format fn_fol DDMMYY10.;
+238        run;
+
+NOTE: The data set WORK.STATUS_FICHE has 0 observations and 7 variables.
+WARNING: Table WORK.STATUS_FICHE non remplacée car cette étape a été interrompue.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+239        
+240        
+241        data Status_fiche;
+242        set Status_fiche;
+243        if BRA=. and NBVISIT=0 then BRA=BRA_INCL;
+244        if  BRA=. and NBVISIT>1 then  BRA=act_bra;
+245         /*
+246        if sumV<NBVISIT and base=2 and suivm=3 then delete;
+247        */
+248        run;
+
+NOTE: The data set WORK.STATUS_FICHE has 0 observations and 6 variables.
+WARNING: Table WORK.STATUS_FICHE non remplacée car cette étape a été interrompue.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+249        
+250        
+251        data Status_fiche;
+252        set Status_fiche;
+253        /*
+254        ---------------------------------------------------------------------------
+255        Les "obligatoires pour tous les bras"
+256        -------------------------------------------------------------------------------
+257        */
+258        if base=1 and (CRFPAGEORDER=18)  and statut="Vierge" then  statut="NA";
+259        if ((CRFPAGECODE="RTUVSUP" or (base=1 and CRFPAGEORDER=20))   and statut="Vierge") then delete;
+260        if base=1 and CRFPAGECYCLENUMBER>1 then delete;
+261        if base=1 and(VISITORDER=1 or VISITORDER=2) and statut="Vierge" then statut="MI";
+262        if base=1 and TempP_INCL>3 and statut="Vierge" and (VISITORDER=3 or VISITORDER=4) and CRFPAGEORDER NE 20 then
+262      ! statut="MI";
+263        if base=1 and BRA_INCL=1 and  VISITORDER=6 and statut="Vierge" then statut="MI";
+264        if base=1 and BRA_INCL=2 and  VISITORDER=5 and statut="Vierge" then statut="MI";
+265        if base=1 and CRFPAGEORDER=7 and sexe=1  then statut="Vierge";
+266        
+267        * -------     BLS24         ------------    ;
+268        if base=1 and CRFPAGECODE="BLS24" and statut="Vierge" and BRA_INCL=2 and bls24 NE 1 and BLm30 NE 1  then
+268      ! statut="MI";
+269        * -------     BLM30         ------------    ;
+18                                                    Le Système SAS                         09:34 Monday, February 1, 2021
+
+270        if base=1 and CRFPAGECODE="BLM30" and statut="Vierge" and BRA_INCL=1 and bls24 NE 1 and BLm30 NE 1 then
+270      ! statut="MI";
+271        
+272        /*
+273        
+274        
+275        
+276        statut="Vierge";
+277        */
+278        
+279        * -------     PLANING         ------------    ;
+280        if base=2 and CRFPAGECODE="PLANING" and statut="Vierge"  then statut="MI";
+281        * -------     ACSUIVIACT         ------------    ;
+282        /*if base=2 and CRFPAGECODE="ACSUIVIACT" and (statut="Vierge" or DESAC=1) and SUIVM<3   then statut="MI"; */
+283        /*
+284        ---------------------------------------------------------------------------
+285        Les "QLQ"
+286        -------------------------------------------------------------------------------
+287        */
+288        * -------       EQ_5D5L      ------------    ;
+289        if base=2 and CRFPAGECODE="EQ_5D5L" and (((statut="Vierge" or DESAC=1) and LISTVISIT<9)or (NBVISIT NE 1 and
+289      ! LISTVISIT=1))   then statut="MI";
+290        
+291        * -------          QLQ30   ------------    ;
+292        if base=2 and CRFPAGECODE="QLQ30" and (((statut="Vierge" or DESAC=1) and LISTVISIT<9)or (NBVISIT NE 1 and
+292      ! LISTVISIT=1))   then statut="MI";
+293        * -------       QPROFTABAC      ------------    ;
+294        if base=2 and  CRFPAGECODE="QPROFTABAC" and(((statut="Vierge" or DESAC=1) and LISTVISIT<9)or (NBVISIT NE 1 and
+294      ! LISTVISIT=1))   then statut="MI";
+295        
+296        * -------     BLS24         ------------    ;
+297        if base=2 and CRFPAGECODE="BLS24" and (statut="Vierge" or DESAC=1) and LISTVISIT>1 and LISTVISIT<9 and
+297      ! VESICONS=1  then statut="MI";
+298        * -------     BLM30         ------------    ;
+299        if base=2 and CRFPAGECODE="BLM30" and (statut="Vierge" or DESAC=1) and LISTVISIT>1 and LISTVISIT<9 and
+299      ! VESICONS=2  then statut="MI";
+300        
+301        /*
+302        ---------------------------------------------------------------------------
+303        Le suivi "classiQUe"
+304        -------------------------------------------------------------------------------
+305        */
+306        
+307        * -------     SUIVITVIM         ------------    ;
+308        if base=2 and CRFPAGEORDER=12 then DELETE ;
+309        if base=2 and CRFPAGECODE="SUIVITVIM" and (statut="Vierge" or DESAC=1) and BRA=1  then statut="MI";
+310        * -------     SUIVITVNIM         ------------    ;
+311        if base=2 and CRFPAGECODE="SUIVITVNIM" and (statut="Vierge" or DESAC=1) and BRA=2  then statut="MI";
+312        
+313        /*
+314        ---------------------------------------------------------------------------
+315        recidive"
+316        -------------------------------------------------------------------------------
+317        */
+318        if base=2 and (CRFPAGECODE="TVNIMPROG" or CRFPAGECODE="TVNIMPROGCYS"  or CRFPAGECODE="TVNIMPROGCHIM") and
+318      ! (statut="Vierge" or DESAC=1) and BRA=2 and LISTVISIT=9 and RECIPRO2 = 2 then statut="MI";
+319        if base=2 and CRFPAGECODE="TVNIMRECI" and (statut="Vierge" or DESAC=1) and BRA=2 and LISTVISIT=9 and RECIPRO2 =
+319      ! 1 then statut="MI";
+320        if base=2 and CRFPAGECODE="TVIMREC" and (statut="Vierge" or DESAC=1) and BRA=1 and LISTVISIT=9 then statut="MI";
+321        
+322        /*
+19                                                    Le Système SAS                         09:34 Monday, February 1, 2021
+
+323        ---------------------------------------------------------------------------
+324        Erreur de saisie"
+325        -------------------------------------------------------------------------------
+326        */
+327        if base=2 and ( CRFPAGEORDER=12)  and statut="Vierge" then  delete;
+328        
+329        if base=2 and (statut="OK"  or statut="QU"  ) and CRFPAGECODE="BLS24" and VESICONS=2 and DESAC=1 then
+329      ! statut="NA";
+330        if base=2 and (statut="OK"  or statut="QU"  ) and CRFPAGECODE="BLM30" and VESICONS=1 and DESAC=1 then
+330      ! statut="NA";
+331        if base=2 and BRA=2   and (statut="OK"  or statut="QU"  )  and CRFPAGECODE="SUIVITVIM" and DESAC=1 then
+331      ! statut="NA";
+332        if base=2 and Bra=1  and (statut="OK"  or statut="QU"    ) and CRFPAGECODE="SUIVITVNIM" and DESAC=1 then
+332      ! statut="NA";
+333        if base=2 and (BRA=2 or LISTVISIT<9 )and (statut="OK"  or statut="QU"    ) and CRFPAGECODE="TVIMREC" and DESAC=1
+333      !  then statut="NA";
+334        if base=2 and (Bra=1  or LISTVISIT<9) and (statut="OK"  or statut="QU"    ) and  CRFPAGECODE="TVNIMRECI" and
+334      ! DESAC=1then statut="NA";
+335        if base=2 and (CRFPAGECODE="TVNIMPROG" or CRFPAGECODE="TVNIMPROGCYS"  or CRFPAGECODE="TVNIMPROGCHIM") and
+335      ! (statut="OK"  or statut="QU") and ( BRA ne 2 or LISTVISIT NE 9 or RECIPRO2 NE 2) and DESAC=1 then statut="NA";
+336        
+337        
+338        
+339        if base=2 and (statut="OK"  or statut="QU"  ) and CRFPAGECODE="BLS24" and VESICONS=2  then statut="Rempli par
+339      ! erreur";
+340        if base=2 and (statut="OK"  or statut="QU"  ) and CRFPAGECODE="BLM30" and VESICONS=1 then statut="Rempli par
+340      ! erreur";
+341        if base=2 and BRA=2   and (statut="OK"  or statut="QU"  )  and CRFPAGECODE="SUIVITVIM" then statut="Rempli par
+341      ! erreur";
+342        if base=2 and Bra=1  and (statut="OK"  or statut="QU"    ) and CRFPAGECODE="SUIVITVNIM" then statut="Rempli par
+342      ! erreur";
+343        if base=2 and (BRA=2 or LISTVISIT<9 )and (statut="OK"  or statut="QU"    ) and CRFPAGECODE="TVIMREC" then
+343      ! statut="Rempli par erreur";
+344        if base=2 and (Bra=1  or LISTVISIT<9) and (statut="OK"  or statut="QU"    ) and  CRFPAGECODE="TVNIMRECI" then
+344      ! statut="Rempli par erreur";
+345        if base=2 and (CRFPAGECODE="TVNIMPROG" or CRFPAGECODE="TVNIMPROGCYS"  or CRFPAGECODE="TVNIMPROGCHIM") and
+345      ! (statut="OK"  or statut="QU") and ( BRA ne 2 or LISTVISIT NE 9 or RECIPRO2 NE 2) then statut="Rempli par erreur"
+345      ! ;
+346        
+347         if VNF=1 then statut="NA";
+348        
+349        run;
+
+NOTE: The data set WORK.STATUS_FICHE has 0 observations and 19 variables.
+WARNING: Table WORK.STATUS_FICHE non remplacée car cette étape a été interrompue.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+350        proc sort data=Status_fiche nodupkey;by localidentifier1 base VISITORDER visitcyclenumber crfpageorder
+350      ! crfpagecyclenumber  ;run;
+ERROR: Variable LOCALIDENTIFIER1 not found.
+ERROR: Variable VISITORDER not found.
+ERROR: Variable VISITCYCLENUMBER not found.
+ERROR: Variable CRFPAGEORDER not found.
+ERROR: Variable CRFPAGECYCLENUMBER not found.
+
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 secondes
+20                                                    Le Système SAS                         09:34 Monday, February 1, 2021
+
+      cpu time            0.00 secondes
+      
+351        
+
+
+352        data Status_fiche;
+353        set Status_fiche;
+354        base=1 and statut="MI" DISCREPANCYSTATUS=30  or (crfpageorder<25 and visitcode ne "Epid" and visitcode ne
+                                  _________________
+____                                                                                                                       
+                                  22
+202                                 
+ERROR 22-322: Syntax error, expecting one of the following: !, !!, &, *, **, +, -, /, ;, <, <=, <>, =, >, ><, >=, AND, EQ, 
+              GE, GT, IN, LE, LT, MAX, MIN, NE, NG, NL, NOTIN, OR, ^=, |, ||, ~=.  
+
+ERROR 202-322: The option or parameter is not recognized and will be ignored.
+
+354      ! base=1 and statut="MI" DISCREPANCYSTATUS=30  or (crfpageorder<25 and visitcode ne "Epid" and visitcode ne
+354      ! "Qual") then statut="NA";
+                   ____
+                   22
+ERROR 22-322: Syntax error, expecting one of the following: !, !!, &, *, **, +, -, /, ;, <, <=, <>, =, >, ><, >=, AND, EQ, 
+              GE, GT, IN, LE, LT, MAX, MIN, NE, NG, NL, NOT, NOTIN, OR, ^, ^=, |, ||, ~, ~=.  
+
+355        if crfpageorder>13 and base=2 and statut="MI" then statut="NA";
+356        run;
+
+NOTE: Character values have been converted to numeric values at the places given by: (Line):(Column).
+      354:19    354:127   355:42    355:59    
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set WORK.STATUS_FICHE may be incomplete.  When this step was stopped there were 0 observations and 6 
+         variables.
+WARNING: Table WORK.STATUS_FICHE non remplacée car cette étape a été interrompue.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+357        
+358        data Status_fiche;
+359        set Status_fiche;
+360        if CRFPAGECODE="ACSUIVIACT" then delete;
+361        if statut='MI' then CRFPAGESTATUS=-30;
+362        if statut='NA' then CRFPAGESTATUS=-8;
+363        if statut='OK' then CRFPAGESTATUS=-0;
+364        if statut='WA' then CRFPAGESTATUS=30;
+365        run;
+
+NOTE: The data set WORK.STATUS_FICHE has 0 observations and 5 variables.
+WARNING: Table WORK.STATUS_FICHE non remplacée car cette étape a été interrompue.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+366        
+367        data Status_fiche;
+368        retain base;
+369        set Status_fiche;
+370        run;
+
+21                                                    Le Système SAS                         09:34 Monday, February 1, 2021
+
+NOTE: The data set WORK.STATUS_FICHE has 0 observations and 2 variables.
+WARNING: Table WORK.STATUS_FICHE non remplacée car cette étape a été interrompue.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+371        
+372        
+373        proc format lib=stu ;
+ERROR: Libref STU non attribué.
+374        value LISTVISITS
+375        0="inclusion"
+376        1="visite à 3 mois"
+377        2="Visite à 6 mois"
+378        3="visite à 1 an"
+379        4="visite a 2 ans"
+380        5="visite à 3 ans"
+381        6="visite à 4 ans"
+382        7="visite à 5 ans"
+383        8="visite à 6 ans"
+384        9="récidive";
+385        QUit;
+
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+386        /*
+387        data Status_fiche;set Status_fiche;LOCALIDENTIFIER1=anumpat ; if base=1 then LISTVISIT=0 ; if base=1 then
+387      ! NBVISIT=0; if base=1 then DVISIT=DINCL;where (CRFPAGEORDER<13 and base=2) or (base=1 and CRFPAGEORDER<28);run;
+388        proc sort;by ANUMPAT BASE CRFPAGEORDER;run;
+389        
+390        data Status_fiche;
+391        set Status_fiche;
+392        if base=1 then VISITORDER=0;
+393        NUMENREG=ANUMPAT;
+394        localidentifier1=ANUMPAT;
+395        run;
+396        
+397        data Status_fiche;
+398        set Status_fiche;
+399        if base=2 and nbvisit> sumv +1 then delete;
+400        run;
+401        
+402        data Status_fiche;
+403        set Status_fiche;
+404        if sumV +1 = VISITORDER-1 and LISTVISIT=. and LASTVISIT<9 then LISTVISIT=LASTVISIT+1;
+405        if sumV +1 = VISITORDER-1 and LISTVISIT=. and LASTVISIT=1 then LISTVISIT=1;
+406        run;
+407        
+408        data Status_fiche;
+409        set Status_fiche;
+410        if CENTRE=. then CENTRE=input(substr(anumpat,1,2),2.);;
+411        run;
+412        */
+413        
+
+
+414        data Status_fiche;
+22                                                    Le Système SAS                         09:34 Monday, February 1, 2021
+
+415        set Status_fiche;
+416        if find(visitname,"16")>0 then NBVISIT= 15 + VISITCYCLENUMBER;
+417        if find(visitname,"16")>0 then VISITORDER= 15 + VISITCYCLENUMBER;
+418         if find(visitname,"16")>0 then visitname='Visite N?'||left(NBVISIT);
+419         if nbvisit=0 then DVISIT=dincl;
+420        run;
+
+NOTE: Numeric values have been converted to character values at the places given by: (Line):(Column).
+      416:9    417:9    418:10   418:61   
+NOTE: Character values have been converted to numeric values at the places given by: (Line):(Column).
+      418:54   
+NOTE: The data set WORK.STATUS_FICHE has 0 observations and 8 variables.
+WARNING: Table WORK.STATUS_FICHE non remplacée car cette étape a été interrompue.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+421        
+422        
+423        proc sql noprint;
+423      !                   create table stat_visit as select distinct fn_fol,DVISIT,NBVISIT,localidentifier1,
+424        case when VISITNAME = "CTRL" then "Planing de suivi" when find(VISITNAME,"Visit")=0 then "Inclusion" else
+424      ! VISITNAME end   as vtype,
+425        sum(case when statut="MI" then 1 else 0 end) as nbmis ,
+426        sum(case when statut="QU" then 1 else 0 end) as nbq,
+427        sum(case when SDVSTATUS=40 then 1 else 0 end) as nbsdv
+428        
+429        
+430        
+431        from Status_fiche
+432        group by DVISIT, NBVISIT,localidentifier1, vtype ,fn_fol
+433        
+434        having dexcl=.
+435        ORDER BY localidentifier1 ,NBVISIT ;
+ERROR: The following columns were not found in the contributing tables: dexcl, DVISIT, fn_fol, localidentifier1, NBVISIT, 
+       SDVSTATUS, statut, VISITNAME.
+NOTE: PROC SQL set option NOEXEC and will continue to check the syntax of statements.
+436        quit;
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+437        
+438        %macro addvisitto;
+439        
+440        data stat_visit_temp;
+441        set stat_visit;
+442        by localidentifier1;
+443        delta=intck('month',DVISIT,fn_fol);
+444        if last.localidentifier1;
+445        if delta>=12;
+446        nbmis=6;
+447        NBVISIT=NBVISIT+1;
+448        DVISIT=DVISIT+365;
+449        if DVISIT<date();
+450        vtype='Visite N?'||left(NBVISIT);
+451        ADD=1;
+452        drop delta;
+453        run;
+23                                                    Le Système SAS                         09:34 Monday, February 1, 2021
+
+454        data stat_visit;
+455        set stat_visit stat_visit_temp;
+456        run;
+457        proc sort; by localidentifier1 NBVISIT;run;
+458        %mend;
+459        %macro lancer;
+460        %do i=1 %to 11;
+461        %addvisitto	;
+462        %end;
+463        %mend;
+464        %lancer;
+
+
+ERROR: Le fichier WORK.STAT_VISIT.DATA n'existe pas.
+
+NOTE: Numeric values have been converted to character values at the places given by: (Line):(Column).
+      464:226   
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set WORK.STAT_VISIT_TEMP may be incomplete.  When this step was stopped there were 0 observations and 6 
+         variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+
+ERROR: Le fichier WORK.STAT_VISIT.DATA n'existe pas.
+
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set WORK.STAT_VISIT may be incomplete.  When this step was stopped there were 0 observations and 6 
+         variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+
+ERROR: Variable LOCALIDENTIFIER1 not found.
+
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+
+
+NOTE: Numeric values have been converted to character values at the places given by: (Line):(Column).
+      464:226   
+NOTE: The data set WORK.STAT_VISIT_TEMP has 0 observations and 6 variables.
+WARNING: Table WORK.STAT_VISIT_TEMP non remplacée car cette étape a été interrompue.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+
+NOTE: The data set WORK.STAT_VISIT has 0 observations and 6 variables.
+WARNING: Table WORK.STAT_VISIT non remplacée car cette étape a été interrompue.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 secondes
+24                                                    Le Système SAS                         09:34 Monday, February 1, 2021
+
+      cpu time            0.00 secondes
+      
+
+ERROR: Variable LOCALIDENTIFIER1 not found.
+
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+
+
+NOTE: Numeric values have been converted to character values at the places given by: (Line):(Column).
+      464:226   
+NOTE: The data set WORK.STAT_VISIT_TEMP has 0 observations and 6 variables.
+WARNING: Table WORK.STAT_VISIT_TEMP non remplacée car cette étape a été interrompue.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+
+NOTE: The data set WORK.STAT_VISIT has 0 observations and 6 variables.
+WARNING: Table WORK.STAT_VISIT non remplacée car cette étape a été interrompue.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+ERROR: Variable LOCALIDENTIFIER1 not found.
+
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+
+
+NOTE: Numeric values have been converted to character values at the places given by: (Line):(Column).
+      464:226   
+NOTE: The data set WORK.STAT_VISIT_TEMP has 0 observations and 6 variables.
+WARNING: Table WORK.STAT_VISIT_TEMP non remplacée car cette étape a été interrompue.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.01 secondes
+      
+
+
+NOTE: The data set WORK.STAT_VISIT has 0 observations and 6 variables.
+WARNING: Table WORK.STAT_VISIT non remplacée car cette étape a été interrompue.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+ERROR: Variable LOCALIDENTIFIER1 not found.
+
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SORT used (Total process time):
+25                                                    Le Système SAS                         09:34 Monday, February 1, 2021
+
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+
+
+NOTE: Numeric values have been converted to character values at the places given by: (Line):(Column).
+      464:226   
+NOTE: The data set WORK.STAT_VISIT_TEMP has 0 observations and 6 variables.
+WARNING: Table WORK.STAT_VISIT_TEMP non remplacée car cette étape a été interrompue.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+
+NOTE: The data set WORK.STAT_VISIT has 0 observations and 6 variables.
+WARNING: Table WORK.STAT_VISIT non remplacée car cette étape a été interrompue.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+ERROR: Variable LOCALIDENTIFIER1 not found.
+
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+
+
+NOTE: Numeric values have been converted to character values at the places given by: (Line):(Column).
+      464:226   
+NOTE: The data set WORK.STAT_VISIT_TEMP has 0 observations and 6 variables.
+WARNING: Table WORK.STAT_VISIT_TEMP non remplacée car cette étape a été interrompue.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+
+NOTE: The data set WORK.STAT_VISIT has 0 observations and 6 variables.
+WARNING: Table WORK.STAT_VISIT non remplacée car cette étape a été interrompue.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+ERROR: Variable LOCALIDENTIFIER1 not found.
+
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+
+
+NOTE: Numeric values have been converted to character values at the places given by: (Line):(Column).
+26                                                    Le Système SAS                         09:34 Monday, February 1, 2021
+
+      464:226   
+NOTE: The data set WORK.STAT_VISIT_TEMP has 0 observations and 6 variables.
+WARNING: Table WORK.STAT_VISIT_TEMP non remplacée car cette étape a été interrompue.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.01 secondes
+      
+
+
+NOTE: The data set WORK.STAT_VISIT has 0 observations and 6 variables.
+WARNING: Table WORK.STAT_VISIT non remplacée car cette étape a été interrompue.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+ERROR: Variable LOCALIDENTIFIER1 not found.
+
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+
+
+NOTE: Numeric values have been converted to character values at the places given by: (Line):(Column).
+      464:226   
+NOTE: The data set WORK.STAT_VISIT_TEMP has 0 observations and 6 variables.
+WARNING: Table WORK.STAT_VISIT_TEMP non remplacée car cette étape a été interrompue.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+
+NOTE: The data set WORK.STAT_VISIT has 0 observations and 6 variables.
+WARNING: Table WORK.STAT_VISIT non remplacée car cette étape a été interrompue.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+ERROR: Variable LOCALIDENTIFIER1 not found.
+
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+
+
+NOTE: Numeric values have been converted to character values at the places given by: (Line):(Column).
+      464:226   
+NOTE: The data set WORK.STAT_VISIT_TEMP has 0 observations and 6 variables.
+WARNING: Table WORK.STAT_VISIT_TEMP non remplacée car cette étape a été interrompue.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+27                                                    Le Système SAS                         09:34 Monday, February 1, 2021
+
+
+
+NOTE: The data set WORK.STAT_VISIT has 0 observations and 6 variables.
+WARNING: Table WORK.STAT_VISIT non remplacée car cette étape a été interrompue.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+ERROR: Variable LOCALIDENTIFIER1 not found.
+
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+
+
+NOTE: Numeric values have been converted to character values at the places given by: (Line):(Column).
+      464:226   
+NOTE: The data set WORK.STAT_VISIT_TEMP has 0 observations and 6 variables.
+WARNING: Table WORK.STAT_VISIT_TEMP non remplacée car cette étape a été interrompue.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.01 secondes
+      
+
+
+NOTE: The data set WORK.STAT_VISIT has 0 observations and 6 variables.
+WARNING: Table WORK.STAT_VISIT non remplacée car cette étape a été interrompue.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+ERROR: Variable LOCALIDENTIFIER1 not found.
+
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+
+
+NOTE: Numeric values have been converted to character values at the places given by: (Line):(Column).
+      464:226   
+NOTE: The data set WORK.STAT_VISIT_TEMP has 0 observations and 6 variables.
+WARNING: Table WORK.STAT_VISIT_TEMP non remplacée car cette étape a été interrompue.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+
+NOTE: The data set WORK.STAT_VISIT has 0 observations and 6 variables.
+WARNING: Table WORK.STAT_VISIT non remplacée car cette étape a été interrompue.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+28                                                    Le Système SAS                         09:34 Monday, February 1, 2021
+
+      
+
+ERROR: Variable LOCALIDENTIFIER1 not found.
+
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+465        
+466        
+467        
+468        
+469        
+470        
+471        
+472        
+473        
+
+
+474        proc sql noprint;
+474      !                   create table atest as select a.* from Stat_visit a left join stu.Et_exclusion b
+475        on a.localidentifier1=b.localidentifier1
+476        where b.dexcl = .;
+ERROR: Libref STU non attribué.
+NOTE: PROC SQL set option NOEXEC and will continue to check the syntax of statements.
+477        ;quit;
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+478        
+
+
+479        data Stat_visit;
+480        set  atest;
+ERROR: Le fichier WORK.ATEST.DATA n'existe pas.
+481        format statut $30.;
+482        if nbmis=0 and nbq=0 and nbsdv=0 then statut="OK";
+483        else if nbmis>0 then statut= cats(nbmis,"MIS");
+484        temp=nbq||left("QUER")	;
+485        if nbq>0 then  statut= catx(" ", statut , temp);
+486        tempq=nbsdv||left("SDV")	;
+487        if nbsdv>0 then  statut= catx(" ", statut , tempq);
+488        
+489        
+490        
+491        
+492        statut= catx(" ",statut,put(dvisit,ddmmyy10.));
+493        if vtype="Planing de suivi" then delete;
+494        nom= "V"||left(NBVISIT);;
+495        lab= "Vis. "||left(NBVISIT);;
+496        drop temp;
+497        run;
+
+NOTE: Numeric values have been converted to character values at the places given by: (Line):(Column).
+      484:6    486:7    494:16   495:20   
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set WORK.STAT_VISIT may be incomplete.  When this step was stopped there were 0 observations and 10 
+         variables.
+29                                                    Le Système SAS                         09:34 Monday, February 1, 2021
+
+WARNING: Table WORK.STAT_VISIT non remplacée car cette étape a été interrompue.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+498        
+499        proc sort data=Stat_visit;  by localidentifier1	 NBVISIT DVISIT;run;
+ERROR: Variable LOCALIDENTIFIER1 not found.
+
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+
+500        data  Stat_visit; set Stat_visit; by localidentifier1 NBVISIT; if last.NBVISIT;run;
+
+NOTE: The data set WORK.STAT_VISIT has 0 observations and 6 variables.
+WARNING: Table WORK.STAT_VISIT non remplacée car cette étape a été interrompue.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.01 secondes
+      
+
+501        proc transpose data=Stat_visit out=stat_final;
+502        by  localidentifier1 ;
+ERROR: Variable LOCALIDENTIFIER1 not found.
+503        ID nom;
+ERROR: Variable NOM not found.
+504        var statut	;
+ERROR: Variable STATUT not found.
+505        run;
+
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set WORK.STAT_FINAL may be incomplete.  When this step was stopped there were 0 observations and 0 
+         variables.
+NOTE: PROCEDURE TRANSPOSE used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+506        
+507        
+508        
+
+
+509        proc format;
+510        value $color
+511        ok=green
+           __
+           22
+           76
+ERROR 22-322: Syntax error, expecting one of the following: une chaîne entre guillemets, une constante numérique, 
+              une constante date temps, une valeur manquante, ;, (, LOW, OTHER.  
+ERROR 76-322: Syntax error, statement will be ignored.
+512        other=white;
+513        run;
+
+WARNING: RUN statement ignored due to previous errors. Submit QUIT; to terminate the procedure.
+NOTE: PROCEDURE FORMAT used (Total process time):
+30                                                    Le Système SAS                         09:34 Monday, February 1, 2021
+
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+NOTE: The SAS System stopped processing this step because of errors.
+514        
+
+
+515        data stat_final;retain CENTRE; set stat_final;
+516        CENTRE=substr(localidentifier1,1,2);
+517        run;
+
+NOTE: Numeric values have been converted to character values at the places given by: (Line):(Column).
+      516:15   
+NOTE: The data set WORK.STAT_FINAL has 0 observations and 2 variables.
+WARNING: Table WORK.STAT_FINAL non remplacée car cette étape a été interrompue.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+WARNING: Apparent invocation of macro SUPPR not resolved.
+518        
+519        %suppr(atest);
+           _
+           180
+
+ERROR 180-322: Statement is not valid or it is used out of proper order.
+
+WARNING: Apparent invocation of macro SUPPR not resolved.
+519                      %suppr(Id_inc);
+                         _
+                         180
+
+ERROR 180-322: Statement is not valid or it is used out of proper order.
+
+WARNING: Apparent invocation of macro SUPPR not resolved.
+519                                     %suppr(Status_fiche2);
+                                        _
+                                        180
+
+ERROR 180-322: Statement is not valid or it is used out of proper order.
+
+WARNING: Apparent invocation of macro SUPPR not resolved.
+519                                                           %suppr(Stat_visit_temp);
+                                                              _
+                                                              180
+
+ERROR 180-322: Statement is not valid or it is used out of proper order.
+
+WARNING: Apparent invocation of macro SUPPR not resolved.
+519                                                                                   %suppr(Test2);
+                                                                                      _
+                                                                                      180
+
+ERROR 180-322: Statement is not valid or it is used out of proper order.
+
+520        
+521        
+522        %macro CreatMetric;
+523        
+524        proc sort data= Status_fiche;by trialsite;run;
+31                                                    Le Système SAS                         09:34 Monday, February 1, 2021
+
+525        Proc sql noprint; create table stats as select  trialsite as site2, sum(case when  CRFPAGESTATUS=0 or
+525      ! CRFPAGESTATUS=25 or CRFPAGESTATUS=30 then 1 else 0 end) as FILLED, sum(case when  CRFPAGESTATUS=-30 then 1 else
+525      ! 0 end) as DUE from Status_fiche group by trialsite ;quit;
+526        Proc sql noprint; create table statstemp as select  SITE as site2,filled, DUE from incl.site  a left join stats
+526      ! b on a.site=b.site2 ;quit;
+527        
+528        proc sql noprint; create table nbcount as  select TRIALSITE,sum(case when responsestatusTXT LIKE '%Missing%'
+528      ! then 1 else 0 end) as Missing,  sum(case when responsestatusTXT LIKE '%Warning%' then 1 else 0 end) as warning,
+528      ! sum(case when responsestatusTXT LIKE '%DCR%' then 1 else 0 end) as DCR from FINALDCR group by TRIALSITE;quit;
+529        
+530        proc sql noprint; create table finalcount as select * from statstemp a full join nbcount b on
+530      ! a.site2=b.TRIALSITE;quit;
+531        
+532        						
+533        data finalcount;
+534        set finalcount;
+535        if FILLED=. then FILLED=0;
+536        if TRIALSITE="" then TRIALSITE=site2;
+537        if site2="" then site2=TRIALSITE;
+538        if Missing=. then Missing=0;
+539        if due=. then due=0;
+540        if dcr=. then dcr=0;
+541        if warning=. then warning=0;
+542        run;
+543        
+544        proc sql noprint; create table temp as select finalcount.*, SITEdescription,COUNTRYDESCRIPTION, COUNTRYCODE from
+544      !  finalcount right join incL.SITE on trialsite=SITE
+545        left join incl.macrocountry on COUNTRYID=SITECOUNTRY;
+546        
+547        
+548        
+549        data _METRICS_SITE;
+550        retain COUNTRYCODE COUNTRYDESCRIPTION trialsite SITEdescription due missing warning dcr;
+551        set temp;
+552        drop site2;
+553        format pc percent.;
+554        pc=FILLED / (FILLED+DUE);
+555        
+556        label missing="Missing data"
+557        due="Missing form"
+558        dcr="Discrepancies from DM"
+559        warning="Active warning"
+560        COUNTRYCODE="Country"
+561        COUNTRYDESCRIPTION="Country"
+562        trialsite="Site"
+563        SITEDESCRIPTION="Site"
+564        run;
+565        proc sort; by SITEdescription;run;
+566        %suppr(temp);
+567        %suppr(stats);
+568        %suppr(statstemp);
+569        %suppr(finalcount);
+570        %suppr(nbcount);
+571        
+572        
+573        
+574        
+575        
+576        proc sort data= status_fiche;by trialsite;run;
+577        
+578        Proc sql noprint; create table stats as select  trialsite as site2,personid as personid2,sum(case when
+32                                                    Le Système SAS                         09:34 Monday, February 1, 2021
+
+578      ! CRFPAGESTATUS=0 or CRFPAGESTATUS=25 or CRFPAGESTATUS=30 then 1 else 0 end) as FILLED, sum(case when
+578      ! CRFPAGESTATUS=-30 then 1 else 0 end) as DUE from Status_fiche  group by trialsite ,personid ;quit;
+579        
+580        Proc sql noprint; create table statstemp as select  trialsite as site2,personid as personid2,DUE from
+580      ! incl.trialsubject a left join stats b on a.TRIALSITE=b.site2 and a.personid=b.personid2;quit;
+581        
+582        
+583        proc sql noprint; create table nbcount as  select TRIALSITE,personid, sum(case when responsestatusTXT LIKE
+583      ! '%Missing%' then 1 else 0 end) as Missing,  sum(case when responsestatusTXT LIKE '%Warning%' then 1 else 0 end)
+583      ! as warning, sum(case when responsestatusTXT LIKE '%DCR-Raised%' then 1 else 0 end) as DCR from FINALDCR group by
+583      !  TRIALSITE , personid;quit;
+584        
+585        proc sql noprint; create table finalcount as select * from statstemp a full join nbcount b on
+585      ! a.site2=b.TRIALSITE and a.personid2=b.personid;quit;
+586        
+587        
+588        data finalcount;
+589        set finalcount;
+590        if personid=. then personid=personid2;
+591        if personid2=. then personid2=personid;
+592        if TRIALSITE="" then TRIALSITE=site2;
+593        if site2="" then site2=TRIALSITE;
+594        if Missing=. then Missing=0;
+595        if due=. then due=0;
+596        if dcr=. then dcr=0;
+597        if warning=. then warning=0;
+598        run;
+599        
+600        proc sql noprint; create table temp as select finalcount.*, SITEdescription,COUNTRYDESCRIPTION,
+600      ! COUNTRYCODE,localidentifier1 from finalcount right join
+601        incl.SITE  on trialsite=SITE
+602        left join incl.macrocountry on COUNTRYID=SITECOUNTRY
+603        left join incl.trialsubject on  finalcount.TRIALSITE=trialsubject.TRIALSITE and
+603      ! finalcount.personid=trialsubject.personid;
+604        
+605        
+606        
+607        data _METRICS_PAT;
+608        retain  COUNTRYCODE COUNTRYDESCRIPTION  SITEdescription  trialsite personid localidentifier1  due missing
+608      ! warning dcr;
+609        set temp;
+610        drop site2 personid2 COUNTRYCODE COUNTRYDESCRIPTION;
+611        where LOCALIDENTIFIER1 NE "";
+612        label missing="Missing data"
+613        due="Missing form"
+614        dcr="Discrepancies from DM"
+615        warning="Active warning"
+616        COUNTRYCODE="Country"
+617        COUNTRYDESCRIPTION="Country"
+618        trialsite="Site"
+619        SITEDESCRIPTION="Site"
+620        LOCALIDENTIFIER1="N°pat";
+621        run;
+622        proc sort; by localidentifier1 ;run;
+623        %suppr(temp);
+624        %suppr(stats);
+625        %suppr(statstemp);
+626        %suppr(finalcount);
+627        %suppr(nbcount);
+628        
+629        
+33                                                    Le Système SAS                         09:34 Monday, February 1, 2021
+
+630        
+631        
+632        
+633        
+634        
+635        proc sort data= status_fiche;by trialsite;run;
+636        Proc sql noprint; create table stats as select   sum(case when  CRFPAGESTATUS=0 or CRFPAGESTATUS=25 or
+636      ! CRFPAGESTATUS=30 then 1 else 0 end) as FILLED, sum(case when  CRFPAGESTATUS=-30 then 1 else 0 end) as DUE from
+636      ! status_fiche;quit;
+637        
+638        proc sql noprint; create table nbcount as  select sum(case when responsestatusTXT LIKE '%Missing%' then 1 else 0
+638      !  end) as Missing,  sum(case when responsestatusTXT LIKE '%Warning%' then 1 else 0 end) as warning, sum(case when
+638      !  responsestatusTXT LIKE '%DCR-Raised%' then 1 else 0 end) as DCR from FINALDCR;quit;
+639        
+640        proc sql noprint; create table finalcount as select * from stats, nbcount;quit;
+641        
+642        
+643        data _METRICS_TRIAL;
+644        set finalcount;
+645        if FILLED=. then FILLED=0;
+646        if Missing=. then Missing=0;
+647        if due=. then due=0;
+648        if dcr=. then dcr=0;
+649        if warning=. then warning=0;
+650        label missing="Missing data"
+651        due="Missing form"
+652        dcr="Discrepancies from DM"
+653        warning="Active warning"
+654        run;
+655        
+656        
+657        %suppr(stats);
+658        %suppr(finalcount);
+659        %suppr(nbcount);
+660        
+661        %MEND;
+662        %CreatMetric;
+ERROR: Variable TRIALSITE not found.
+
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+
+ERROR: The following columns were not found in the contributing tables: CRFPAGESTATUS, trialsite.
+NOTE: PROC SQL set option NOEXEC and will continue to check the syntax of statements.
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+
+ERROR: Libref INCL non attribué.
+ERROR: Le fichier WORK.STATS.DATA n'existe pas.
+NOTE: PROC SQL set option NOEXEC and will continue to check the syntax of statements.
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.00 secondes
+34                                                    Le Système SAS                         09:34 Monday, February 1, 2021
+
+      cpu time            0.00 secondes
+      
+
+
+ERROR: Le fichier WORK.FINALDCR.DATA n'existe pas.
+NOTE: PROC SQL set option NOEXEC and will continue to check the syntax of statements.
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+
+ERROR: Le fichier WORK.STATSTEMP.DATA n'existe pas.
+ERROR: Le fichier WORK.NBCOUNT.DATA n'existe pas.
+NOTE: PROC SQL set option NOEXEC and will continue to check the syntax of statements.
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+
+ERROR: Le fichier WORK.FINALCOUNT.DATA n'existe pas.
+
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set WORK.FINALCOUNT may be incomplete.  When this step was stopped there were 0 observations and 7 
+         variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+
+ERROR: Libref INCL non attribué.
+ERROR: Libref INCL non attribué.
+NOTE: PROC SQL set option NOEXEC and will continue to check the syntax of statements.
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+
+ERROR: Le fichier WORK.TEMP.DATA n'existe pas.
+
+WARNING: La variable site2 dans la liste DROP, KEEP, ou RENAME n'a jamais été référencée.
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set WORK._METRICS_SITE may be incomplete.  When this step was stopped there were 0 observations and 10 
+         variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+35                                                    Le Système SAS                         09:34 Monday, February 1, 2021
+
+WARNING: Apparent invocation of macro SUPPR not resolved.
+NOTE: Line generated by the invoked macro "CREATMETRIC".
+662                                 %suppr(temp);
+                                    _
+                                    180
+
+ERROR 180-322: Statement is not valid or it is used out of proper order.
+
+WARNING: Apparent invocation of macro SUPPR not resolved.
+NOTE: Line generated by the invoked macro "CREATMETRIC".
+662                                               %suppr(stats);
+                                                  _
+                                                  180
+
+ERROR 180-322: Statement is not valid or it is used out of proper order.
+
+WARNING: Apparent invocation of macro SUPPR not resolved.
+NOTE: Line generated by the invoked macro "CREATMETRIC".
+662                                                              %suppr(statstemp);
+                                                                 _
+                                                                 180
+
+ERROR 180-322: Statement is not valid or it is used out of proper order.
+
+WARNING: Apparent invocation of macro SUPPR not resolved.
+NOTE: Line generated by the invoked macro "CREATMETRIC".
+662                                                                                 %suppr(finalcount);
+                                                                                    _
+                                                                                    180
+
+ERROR 180-322: Statement is not valid or it is used out of proper order.
+
+WARNING: Apparent invocation of macro SUPPR not resolved.
+NOTE: Line generated by the invoked macro "CREATMETRIC".
+662                                                                                                     %suppr(nbcount);
+                                                                                                        _
+                                                                                                        180
+
+ERROR 180-322: Statement is not valid or it is used out of proper order.
+
+ERROR: Variable TRIALSITE not found.
+
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+
+ERROR: The following columns were not found in the contributing tables: CRFPAGESTATUS, personid, trialsite.
+NOTE: PROC SQL set option NOEXEC and will continue to check the syntax of statements.
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+
+ERROR: Libref INCL non attribué.
+ERROR: Le fichier WORK.STATS.DATA n'existe pas.
+NOTE: PROC SQL set option NOEXEC and will continue to check the syntax of statements.
+36                                                    Le Système SAS                         09:34 Monday, February 1, 2021
+
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+
+ERROR: Le fichier WORK.FINALDCR.DATA n'existe pas.
+NOTE: PROC SQL set option NOEXEC and will continue to check the syntax of statements.
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+
+ERROR: Le fichier WORK.STATSTEMP.DATA n'existe pas.
+ERROR: Le fichier WORK.NBCOUNT.DATA n'existe pas.
+NOTE: PROC SQL set option NOEXEC and will continue to check the syntax of statements.
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+
+
+NOTE: The data set WORK.FINALCOUNT has 0 observations and 9 variables.
+WARNING: Table WORK.FINALCOUNT non remplacée car cette étape a été interrompue.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+ERROR: Libref INCL non attribué.
+ERROR: Libref INCL non attribué.
+ERROR: Libref INCL non attribué.
+NOTE: PROC SQL set option NOEXEC and will continue to check the syntax of statements.
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+
+ERROR: Le fichier WORK.TEMP.DATA n'existe pas.
+
+WARNING: La variable site2 dans la liste DROP, KEEP, ou RENAME n'a jamais été référencée.
+WARNING: La variable personid2 dans la liste DROP, KEEP, ou RENAME n'a jamais été référencée.
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set WORK._METRICS_PAT may be incomplete.  When this step was stopped there were 0 observations and 8 
+         variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+
+
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 secondes
+37                                                    Le Système SAS                         09:34 Monday, February 1, 2021
+
+      cpu time            0.00 secondes
+      
+
+WARNING: Apparent invocation of macro SUPPR not resolved.
+NOTE: Line generated by the invoked macro "CREATMETRIC".
+662                                                                                                    %suppr(temp);
+                                                                                                       _
+                                                                                                       180
+
+ERROR 180-322: Statement is not valid or it is used out of proper order.
+
+WARNING: Apparent invocation of macro SUPPR not resolved.
+NOTE: Line generated by the invoked macro "CREATMETRIC".
+662                                                                                                                  %suppr
+                                                                                                                     _
+                                                                                                                     180
+662      ! (stats); %suppr(statstemp); %suppr(finalcount); %suppr(nbcount);        proc sort data= status_fiche;by
+
+ERROR 180-322: Statement is not valid or it is used out of proper order.
+
+WARNING: Apparent invocation of macro SUPPR not resolved.
+NOTE: Line generated by the invoked macro "CREATMETRIC".
+662         %suppr(statstemp);
+
+_                                                                                                                          
+
+180
+
+ERROR 180-322: Statement is not valid or it is used out of proper order.
+
+WARNING: Apparent invocation of macro SUPPR not resolved.
+NOTE: Line generated by the invoked macro "CREATMETRIC".
+662         %suppr(finalcount);
+
+_                                                                                                                          
+
+180
+
+ERROR 180-322: Statement is not valid or it is used out of proper order.
+
+WARNING: Apparent invocation of macro SUPPR not resolved.
+NOTE: Line generated by the invoked macro "CREATMETRIC".
+662         %suppr(nbcount);
+
+_                                                                                                                          
+
+180
+
+ERROR 180-322: Statement is not valid or it is used out of proper order.
+
+ERROR: Variable TRIALSITE not found.
+
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+
+ERROR: The following columns were not found in the contributing tables: CRFPAGESTATUS.
+NOTE: PROC SQL set option NOEXEC and will continue to check the syntax of statements.
+38                                                    Le Système SAS                         09:34 Monday, February 1, 2021
+
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+
+ERROR: Le fichier WORK.FINALDCR.DATA n'existe pas.
+NOTE: PROC SQL set option NOEXEC and will continue to check the syntax of statements.
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+
+ERROR: Le fichier WORK.STATS.DATA n'existe pas.
+ERROR: Le fichier WORK.NBCOUNT.DATA n'existe pas.
+NOTE: PROC SQL set option NOEXEC and will continue to check the syntax of statements.
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.00 secondes
+      
+
+
+NOTE: Line generated by the invoked macro "CREATMETRIC".
+662         warning=0; label missing="Missing data" due="Missing form" dcr="Discrepancies from DM" warning="Active warning"
+662      !  run;   %suppr(stats); %suppr(finalcount); %suppr(nbcount);
+                   _              _                   _
+                   180            180                 180
+WARNING: Apparent invocation of macro SUPPR not resolved.
+WARNING: Apparent invocation of macro SUPPR not resolved.
+WARNING: Apparent invocation of macro SUPPR not resolved.
+ERROR 180-322: Statement is not valid or it is used out of proper order.
+
+663        
+
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set WORK._METRICS_TRIAL may be incomplete.  When this step was stopped there were 0 observations and 7 
+         variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 secondes
+      cpu time            0.01 secondes
+      
+
+ERROR: Errors printed on pages 2,3,4,5,6,7,10,11,12,13,14,15,16,19,20,21,22,23,24,25,26,27,28,29,30,33,34,35,36,37,38.
+
+NOTE: SAS Institute Inc., SAS Campus Drive, Cary, NC USA 27513-2414
+NOTE: Le Système SAS used:
+      real time           0.60 secondes
+      cpu time            0.46 secondes
+      
