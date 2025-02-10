@@ -62,10 +62,10 @@ libname ora_suiv  clear;
 %end;
 %mend;
 
-%update_raw(update=0); /* mettre update=0 pour ne pas mettre à jour les données a partir de la base oracle */
+%update_raw(update=1); /* mettre update=0 pour ne pas mettre à jour les données a partir de la base oracle */
 
 
-%Run_mapping(update=0); /* mettre update=0 pour ne pas relancer le mapping et lire les données mappé déja présente */
+%Run_mapping(update=1); /* mettre update=0 pour ne pas relancer le mapping et lire les données mappé déja présente */
 
 
 
@@ -110,7 +110,7 @@ run;
 */
 data MyExport ;
 set MyExport;
-format METAatINCL METAatSUIV NIMCYSINCL.;
+format METAatINCL METAatSUIV YN.;
 if DNAIS NE . and DINCL NE . then  age = int(yrdif(DNAIS,DINCL,'ACTUAL'));
 if (DateIndexMeta>0 and DateIndexMeta<DINCL + 3*30) or ( DateIndexMeta=. and find(tpmeta,'0')>0 ) THEN METAatINCL = 1 ; else METAatINCL = 2;
 if (DateIndexMeta>0 and DateIndexMeta>DINCL + 3*30)or (META=1 and DateIndexMeta=. and find(tpmeta,'0')=0 )  THEN METAatSUIV = 1 ; else METAatSUIV = 2;
