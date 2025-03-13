@@ -44,11 +44,16 @@ select  anumpat, 99 as nbvisit, "PERDUE DE VUE" as EVENT "Evenement", 	   PDVDAT
   UNION
 select  anumpat, 99 as nbvisit, "DECES" as EVENT "Evenement", 	   NSDDC as DATEE "Date" format=DDMMYY10., " " as comment, . as TTIGTTOT,  "" as EXE from suiv.planing	where NSDDC NE .
 
+
+  UNION
+select  anumpat, nbvisit, "CHIMIO" as EVENT "Evenement", 	   IMCHMDB as DATEE "Date" format=DDMMYY10., cats(IMCHMIN,put(IMCHMDB,DDMMYY10.),"-",put(IMCHMFN,DDMMYY10.) ) as comment, . as TTIGTTOT,  "" as EXE from stu.Cl_chimio_trt where IMCHMDB NE .
+
+
 ORDER BY   anumpat,nbvisit, DATEE , EVENT;
 ;quit; 
 
 
-%suppr(Cl_rtuv);
+/*%suppr(Cl_rtuv);*/
 
 
 /*
@@ -60,3 +65,5 @@ run;
 ods excel close;
 
 */
+
+

@@ -36,7 +36,7 @@ data _null_;test=strip("&datetemp");datefileL=tranwrd(test,"-",".");call symputx
 /* -------------------------NE PAS TOUCHER AU RESTE SANS SAVOIR CE QU'ON FAIT ! ------------------------------------------*/
 
 
-%let pathprog = C:\Users\a_mangin\Documents\GitHub\COB\Commun_France_cohorte;
+%let pathprog = \\nas-01\SBE_ETUDES\COBLANCE\11-DataBase\Mapping France Cohorte\Commun_France_cohorte;
 %include "&pathprog/00_autoexec.sas";  /* Chemin du script d'installation Git */
 
 
@@ -62,11 +62,22 @@ libname ora_suiv  clear;
 %end;
 %mend;
 
-%update_raw(update=0); /* mettre update=0 pour ne pas mettre à jour les données a partir de la base oracle */
+%update_raw(update=1); /* mettre update=0 pour ne pas mettre à jour les données a partir de la base oracle */
 
 
-%Run_mapping(update=0); /* mettre update=0 pour ne pas relancer le mapping et lire les données mappé déja présente */
+%Run_mapping(update=1); /* mettre update=0 pour ne pas relancer le mapping et lire les données mappé déja présente */
 
 
 %include "&pathprog\Sous requete\Sous requete - partie Querie.sas";
 %include "&pathprog\Sous requete\Sous requete - partie FM.sas";
+
+
+
+
+
+data aatest;
+set finaldcr;
+keep site LOCALIDENTIFIER1 VISITNAME crftitle RESPONSEVALUE VALIDATIONMESSAGE  COMMENTS; 
+where RESPONSESTATUS=31;
+run;
+

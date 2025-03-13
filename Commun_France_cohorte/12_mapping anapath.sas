@@ -325,10 +325,20 @@ from stu.An_anameta
 ;
 ;quit;
 
+
+data tnm_all;
+set tnm_all;
+if not (TF=. and NF=. and MF=. and grade73 = . and grade04 = .) ;
+
+run;
+proc sql noprint; create table tnm_all2 as select a.* from tnm_all a left join stu.Et_exclusion b on a.anumpat=b.anumpat and DEXCL =.;quit;
+data tnm_all; set tnm_all2;run;
+
+
 /* Filtrer les réponses MTAUORG pour V=1 */
 data loc_meta;
     set stu.An_anameta;
-    where V = 1;
+    where V NE 2 and V NE 5;
 run;
 proc sort; by anumpat;run;
 
@@ -357,8 +367,9 @@ and find(crftitle,"Meta");quit;
 
 
 /* table temporaire ou on vire le suivi */
-data temp_N0; set TNM_ALL; where  V NE 2;run; 
+data temp_N0; set TNM_ALL; where  V NE 2 and V NE 5 and TF NE .;run; 
 
+proc sort;by anumpat descending TF ;run;
 /* on commence par creer une table temporaire de TNM_incl, ou on chope les infos du T qui colle bien. on vire le reste car bien qu'on ai eu le Tmax,
 on a pas nécéssairement N max, etc. va falloir faire des sous table pour les creer */
 data TNM_incl;
@@ -366,7 +377,7 @@ set temp_N0;
 by anumpat;
 if First.anumpat;
 label TF="T final inclusion";
-drop NF MF grade73 grade04;
+drop  NF MF grade73 grade04;
 run;
 
 
@@ -386,7 +397,7 @@ left join temp_G1 d on a.anumpat=d.anumpat left join temp_G2 e on a.anumpat=e.an
 data stu.AN_TNM_ALL;set TNM_ALL;run;
 
 /* déplacement de code : traitement aldéric pour meta, je met ça ici direct */
-DATA stu.An_tnm_incl;
+DATA An_tnm_incl;
 SET temp_final;
 IF (grade73=3) or (grade04=3) THEN Grade = 3;
 ELSE IF (grade73>0) or (grade04>0) THEN Grade = 2;
@@ -405,10 +416,14 @@ RUN;
 
 
 /* 05.2024 -> patch correctif des incohérences ! */
-DATA stu.An_tnm_incl;
-set stu.An_tnm_incl;
+DATA An_tnm_incl;
+set An_tnm_incl;
 if Grade=1 and TF=2 then Grade=3;
 run;
+
+proc sql noprint; create table stu.An_tnm_incl as select a.anumpat,b.* from stu.resume a left join An_tnm_incl b on a.anumpat=b.anumpat;quit;
+
+proc sort nodupkey;by anumpat;run;
 
 
 

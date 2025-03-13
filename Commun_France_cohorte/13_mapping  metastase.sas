@@ -218,8 +218,8 @@ IF imchmin = 6 then METACHIM=1;
 RUN;
 proc sort nodupkey; by anumpat;run;
 
-proc format;
-value meta_chim
+proc format lib=stu;
+value meta_chim 
 -1="Oui, meta non précisé"
 1="Oui, ligne meta"
 2="Non";

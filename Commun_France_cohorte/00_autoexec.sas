@@ -3,7 +3,9 @@
 
 %macro Run_mapping(update=0);
 %if &update %then %do;
+
 %include "&pathprog/02_copie des tables et format_label.sas";
+%include "&pathprog/15_table resume.sas";
 %include "&pathprog/03_ mapping des tables simple.sas";
 %include "&pathprog/04_mapping demographie.sas";
 %include "&pathprog/05_mapping de la partie clinique.sas";
@@ -16,7 +18,7 @@
 %include "&pathprog/12_mapping anapath.sas";
 %include "&pathprog/13_mapping  metastase.sas";
 %include "&pathprog/14_Liste des chirurgies.sas";
-%include "&pathprog/15_table resume.sas";
+
 %include "&pathprog/16_planing_etude.sas";
 %end;
 %else %do;

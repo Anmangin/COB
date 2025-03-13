@@ -34,9 +34,12 @@ data _null_;test=strip("&datetemp");datefileL=tranwrd(test,"-",".");call symputx
 /* Chemin reseau pour les fichiers de l'etude */
 
 /* -------------------------NE PAS TOUCHER AU RESTE SANS SAVOIR CE QU'ON FAIT ! ------------------------------------------*/
+%let ordervar= essai site  anumpat  NBVISIT    bra  vnf v vpla crftitle crfpagecyclenumber CRFPAGESTATUS;
+%let ordervar_g= essai site  anumpat  NBVISIT    bra  vnf v vpla recidive crftitle crfpagecyclenumber repeatnumber CRFPAGESTATUS;
 
 
-%let pathprog = C:\Users\a_mangin\Documents\GitHub\COB\Commun_France_cohorte;
+
+%let pathprog = \\nas-01\SBE_ETUDES\COBLANCE\11-DataBase\Mapping France Cohorte\Commun_France_cohorte;
 %include "&pathprog/00_autoexec.sas";  /* Chemin du script d'installation Git */
 
 
@@ -62,9 +65,8 @@ libname ora_suiv  clear;
 %end;
 %mend;
 
-%update_raw(update=0); /* mettre update=0 pour ne pas mettre à jour les données a partir de la base oracle */
+%update_raw(update=1); /* mettre update=0 pour ne pas mettre à jour les données a partir de la base oracle */
 
 
 %Run_mapping(update=1); /* mettre update=0 pour ne pas relancer le mapping et lire les données mappé déja présente */
-
 
